@@ -2,7 +2,7 @@ using FluentMigrator;
 
 namespace CfpService.Migrations;
 
-[Migration(20240330213500, TransactionBehavior.None)]
+[Migration(20240330213500)]
 public class InitSchema : Migration
 {
     public override void Up()

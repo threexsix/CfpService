@@ -1,5 +1,4 @@
 using CfpService.Dtos.Application;
-using CfpService.Services.Activity;
 using CfpService.Services.Application;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,59 +14,37 @@ public class ApplicationsController : ControllerBase
         _applicationService = applicationService;
     }
     
+        
+    [HttpGet("submittedAfter={timeString}")]
+    public ActionResult<IEnumerable<GetApplicationDto>> GetSubmittedAfter(string timeString)
+    {
+        if (!DateTime.TryParse(timeString, out var time))
+            return BadRequest("invalid date format");
+        
+        var applications = _applicationService.GetSubmittedApplications(time);
+        
+        return Ok(applications);
+    }
+    
+    [HttpGet("unsubmittedOlder={timeString}")]
+    public ActionResult<IEnumerable<GetApplicationDto>> GetUnsubmittedOlder(string timeString)
+    {
+        if (!DateTime.TryParse(timeString, out var time))
+            return BadRequest("invalid date format");
+        
+        var applications = _applicationService.GetUnSubmittedApplications(time);
+        
+        return Ok(applications);
+    }
+    
     [HttpGet("{id}")]
     public ActionResult<GetApplicationDto> GetById(Guid id)
     {
         var application = _applicationService.GetApplicationById(id);
+        
         if (application == null) return NotFound();
+        
         return Ok(application);
-    }
-   
-    [HttpPost]
-    public ActionResult<GetApplicationDto> Add([FromBody] PostApplicationDto dto)
-    {
-        if (_applicationService.AnyDraftUserApplications(dto.Author))
-            return BadRequest("cannot add, user has not-submitted application");
-        
-        var createdApplication = _applicationService.AddApplication(dto);
-        return CreatedAtAction(nameof(GetById), new { id = createdApplication.Id }, createdApplication);
-    }
-    
-    [HttpPut("{id}")]
-    public ActionResult<GetApplicationDto> EditNotSubmittedApplication(Guid id, [FromBody] PutApplicationDto dto)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        if (_applicationService.IsSubmitted(id))
-        {
-            return BadRequest("cannot edit submitted application");
-        }
-  
-        var alteredApplication = _applicationService.EditApplication(id, dto);
-        if (alteredApplication == null) return NotFound();
-        
-        return CreatedAtAction(nameof(GetById), new { id = alteredApplication.Id }, alteredApplication);
-    }
-
-    [HttpDelete("{id}")]
-    public IActionResult Delete(Guid id)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        
-        if (_applicationService.IsSubmitted(id))
-        {
-            return BadRequest("cannot delete submitted application");
-        }
-
-        _applicationService.DeleteApplication(id);
-        
-        return Ok();
     }
     
     [HttpPost("{id}/[action]")]
@@ -83,29 +60,45 @@ public class ApplicationsController : ControllerBase
         return Ok();
     }
     
-    [HttpGet("submittedAfter={timeString}")]
-    public ActionResult<IEnumerable<GetApplicationDto>> GetSubmittedAfter(string timeString)
+    [HttpPost]
+    public ActionResult<GetApplicationDto> PostApplication([FromBody] PostApplicationDto dto)
     {
-        DateTime time;
-        if (!DateTime.TryParse(timeString, out time))
-        {
-            return BadRequest("invalid date format");
-        }
-        var applications = _applicationService.GetSubmittedApplications(time);
+        if (_applicationService.ExistUnsubmitted(dto.Author))
+            return BadRequest("cannot add, user has not-submitted application");
         
-        return Ok(applications);
+        var createdApplication = _applicationService.AddApplication(dto);
+        return CreatedAtAction(nameof(GetById), new { id = createdApplication.Id }, createdApplication);
     }
     
-    [HttpGet("unsubmittedOlder={timeString}")]
-    public ActionResult<IEnumerable<GetApplicationDto>> GetUnSubmitted(string timeString)
+    [HttpPut("{id}")]
+    public ActionResult<GetApplicationDto> EditNotSubmittedApplication(Guid id, [FromBody] PutApplicationDto dto)
     {
-        DateTime time;
-        if (!DateTime.TryParse(timeString, out time))
-        {
-            return BadRequest("invalid date format");
-        }
-        var applications = _applicationService.GetUnSubmittedApplications(time);
+        if (!_applicationService.ExistUnsubmitted(id))
+            return NotFound();
         
-        return Ok(applications);
+        if (_applicationService.IsSubmitted(id))
+            return BadRequest("cannot edit submitted application");
+        
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+  
+        var alteredApplication = _applicationService.EditApplication(id, dto);
+        
+        return CreatedAtAction(nameof(GetById), new { id = alteredApplication.Id }, alteredApplication);
     }
+
+    [HttpDelete("{id}")]
+    public IActionResult Delete(Guid id)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        if (_applicationService.IsSubmitted(id))
+            return BadRequest("cannot delete submitted application");
+
+        _applicationService.DeleteApplication(id);
+        
+        return Ok();
+    }
+    
 }

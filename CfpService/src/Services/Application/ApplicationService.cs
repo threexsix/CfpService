@@ -56,7 +56,7 @@ public class ApplicationService : IApplicationService
         return application;
     }
 
-    public bool AnyDraftUserApplications(Guid userId)
+    public bool ExistUnsubmitted(Guid userId)
     {
         return _applicationRepository.Exist(userId);
     }
