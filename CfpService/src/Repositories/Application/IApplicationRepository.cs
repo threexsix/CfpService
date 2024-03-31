@@ -13,4 +13,5 @@ public interface IApplicationRepository
     public IEnumerable<GetApplicationDto> GetUnSubmittedApplications(DateTime time);
     public GetApplicationDto GetUserUnSubmittedApplication(Guid userId);
     public bool Exist(Guid userId);
+    public bool IsSubmitted(Guid applicationId);
 }

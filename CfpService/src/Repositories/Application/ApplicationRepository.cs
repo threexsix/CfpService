@@ -72,6 +72,7 @@ public class ApplicationRepository : IApplicationRepository
                     outline = @Outline
         
         where       id = @Id
+        and         submitted_at is null
         returning id, author, activity, name, description, outline;
         ";
         var parameters = new
@@ -92,7 +93,8 @@ public class ApplicationRepository : IApplicationRepository
         const string sql = @"
             delete
             from    applications
-            where   id = @Id;
+            where   id = @Id
+            and     submitted_at is null
         ";
         connection.Execute(sql, new { Id = id});
     }
@@ -146,7 +148,7 @@ public class ApplicationRepository : IApplicationRepository
                         description,
                         outline
                 from    applications
-                where   created_at < @Time
+                where   created_at > @Time
                 and     submitted_at is null
                 ";
 
@@ -185,5 +187,20 @@ public class ApplicationRepository : IApplicationRepository
                 ";
 
         return connection.QuerySingleOrDefault<bool>(sql, new { Id = userId });
+    }
+
+    public bool IsSubmitted(Guid applicationId)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        connection.Open();
+        const string sql = @"
+                select exists (
+                        select 1
+                        from applications
+                        where id = @Id
+                        and   submitted_at is not null)
+                ";
+
+        return connection.QuerySingleOrDefault<bool>(sql, new { Id = applicationId });
     }
 }

@@ -1,23 +1,21 @@
 using CfpService.Dtos.Application;
-using CfpService.Services;
 using CfpService.Services.Activity;
+using CfpService.Services.Application;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CfpService.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ReportController : ControllerBase
+public class ApplicationsController : ControllerBase
 {
     private IApplicationService _applicationService;
-    private IActivityService _activityService;
-    public ReportController(IApplicationService applicationService, IActivityService activityService)
+    public ApplicationsController(IApplicationService applicationService)
     {
         _applicationService = applicationService;
-        _activityService = activityService;
     }
     
-    [HttpGet("[action]")]
+    [HttpGet("{id}")]
     public ActionResult<GetApplicationDto> GetById(Guid id)
     {
         var application = _applicationService.GetApplicationById(id);
@@ -25,34 +23,46 @@ public class ReportController : ControllerBase
         return Ok(application);
     }
    
-    [HttpPost("[action]")]
+    [HttpPost]
     public ActionResult<GetApplicationDto> Add([FromBody] PostApplicationDto dto)
     {
         if (_applicationService.AnyDraftUserApplications(dto.Author))
-            return BadRequest("cannot add, user have not-submitted application");
+            return BadRequest("cannot add, user has not-submitted application");
         
         var createdApplication = _applicationService.AddApplication(dto);
         return CreatedAtAction(nameof(GetById), new { id = createdApplication.Id }, createdApplication);
     }
     
-    [HttpPut("[action]/{id}")]
-    public ActionResult<GetApplicationDto> Edit(Guid id, [FromBody] PutApplicationDto dto)
+    [HttpPut("{id}")]
+    public ActionResult<GetApplicationDto> EditNotSubmittedApplication(Guid id, [FromBody] PutApplicationDto dto)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
+
+        if (_applicationService.IsSubmitted(id))
+        {
+            return BadRequest("cannot edit submitted application");
+        }
   
         var alteredApplication = _applicationService.EditApplication(id, dto);
+        if (alteredApplication == null) return NotFound();
+        
         return CreatedAtAction(nameof(GetById), new { id = alteredApplication.Id }, alteredApplication);
     }
 
-    [HttpPut("[action]/{id}")]
+    [HttpDelete("{id}")]
     public IActionResult Delete(Guid id)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
+        }
+        
+        if (_applicationService.IsSubmitted(id))
+        {
+            return BadRequest("cannot delete submitted application");
         }
 
         _applicationService.DeleteApplication(id);
@@ -60,12 +70,12 @@ public class ReportController : ControllerBase
         return Ok();
     }
     
-    [HttpPut("{id}/[action]")]
+    [HttpPost("{id}/[action]")]
     public IActionResult Submit(Guid id)
     {
-        if (!ModelState.IsValid)
+        if (!_applicationService.IsApplicationValidToSubmit(id))
         {
-            return BadRequest(ModelState);
+            return BadRequest("cannot submit, key fields are not filled in application");
         }
 
         _applicationService.SubmitApplication(id);
@@ -73,46 +83,29 @@ public class ReportController : ControllerBase
         return Ok();
     }
     
-    [HttpGet("[action]")]
-    public ActionResult<IEnumerable<GetApplicationDto>> GetSubmitted([FromQuery] string submittedAfter)
+    [HttpGet("submittedAfter={timeString}")]
+    public ActionResult<IEnumerable<GetApplicationDto>> GetSubmittedAfter(string timeString)
     {
         DateTime time;
-        if (!DateTime.TryParse(submittedAfter, out time))
+        if (!DateTime.TryParse(timeString, out time))
         {
-            return BadRequest("Invalid date format.");
+            return BadRequest("invalid date format");
         }
         var applications = _applicationService.GetSubmittedApplications(time);
         
         return Ok(applications);
     }
     
-    [HttpGet("[action]")]
-    public ActionResult<IEnumerable<GetApplicationDto>> GetUnSubmitted([FromQuery] string submittedAfter)
+    [HttpGet("unsubmittedOlder={timeString}")]
+    public ActionResult<IEnumerable<GetApplicationDto>> GetUnSubmitted(string timeString)
     {
         DateTime time;
-        if (!DateTime.TryParse(submittedAfter, out time))
+        if (!DateTime.TryParse(timeString, out time))
         {
-            return BadRequest("Invalid date format.");
+            return BadRequest("invalid date format");
         }
         var applications = _applicationService.GetUnSubmittedApplications(time);
         
         return Ok(applications);
-    }
-    
-    
-    [HttpGet("[action]")]
-    public ActionResult<GetApplicationDto> GetUserUnSubmittedApplication([FromQuery] Guid userId)
-    {
-        var application = _applicationService.GetUserUnSubmittedApplication(userId);
-        if (application == null) return NotFound();
-        return Ok(application);
-    }
-    
-    [HttpGet("[action]")]
-    public ActionResult<GetApplicationDto> GetAllActivities()
-    {
-        var activities = _activityService.GetAllActivities();
-        if (activities == null) return NotFound();
-        return Ok(activities);
     }
 }

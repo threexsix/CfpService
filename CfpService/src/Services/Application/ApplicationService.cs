@@ -1,10 +1,7 @@
-using CfpService.Dtos;
 using CfpService.Dtos.Application;
-using CfpService.Models;
-using CfpService.Repositories;
 using CfpService.Repositories.Application;
 
-namespace CfpService.Services;
+namespace CfpService.Services.Application;
 
 public class ApplicationService : IApplicationService
 {
@@ -62,5 +59,17 @@ public class ApplicationService : IApplicationService
     public bool AnyDraftUserApplications(Guid userId)
     {
         return _applicationRepository.Exist(userId);
+    }
+
+    public bool IsSubmitted(Guid applicationId)
+    {
+        return _applicationRepository.IsSubmitted(applicationId);
+    }
+
+    public bool IsApplicationValidToSubmit(Guid applicationId)
+    {
+        var dto = _applicationRepository.GetById(applicationId);
+        return (!string.IsNullOrWhiteSpace(dto.Name) && !string.IsNullOrWhiteSpace(dto.Activity) &&
+                !string.IsNullOrWhiteSpace(dto.Outline));
     }
 }
