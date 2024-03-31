@@ -10,21 +10,20 @@ public class InitSchema : Migration
         const string sql = @"
 		create table activity_types 
 		(
-			name varchar unique,
-			description varchar,
-			primary key (name)
+			name varchar primary key unique,
+			description varchar
 		);
 
 		create table applications
 		(
 			id uuid primary key default gen_random_uuid(),
 			author uuid,
-			activity varchar null references activity_types(name),
+			activity varchar references activity_types(name),
 			name varchar(100),
 			description varchar,
 			outline varchar,
-			is_draft boolean default true,
-			at timestamp default now()
+			created_at timestamp default now(),
+			submitted_at timestamp
 		);
         ";
         

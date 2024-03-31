@@ -14,7 +14,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services
     .AddDalInfrastructure(builder.Configuration)
-    .AddDalRepositories();
+    .AddDalRepositories()
+    .AddApplicationServices();
 
 var app = builder.Build();
 
