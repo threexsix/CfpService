@@ -1,13 +1,11 @@
-using System.ComponentModel.DataAnnotations;
 using CfpService.Dtos;
-using CfpService.Models;
+using CfpService.Dtos.Application;
 using CfpService.Settings;
 using Dapper;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Options;
 using Npgsql;
 
-namespace CfpService.Repositories;
+namespace CfpService.Repositories.Application;
 
 public class ApplicationRepository : IApplicationRepository
 {
@@ -50,7 +48,7 @@ public class ApplicationRepository : IApplicationRepository
                     outline
                     )
             values  (
-                     @AuthorId,
+                     @Author,
                      @Activity,
                      @Name,
                      @Description,
@@ -172,5 +170,20 @@ public class ApplicationRepository : IApplicationRepository
                 ";
 
         return connection.QuerySingleOrDefault<GetApplicationDto>(sql, new { Id = userId });
+    }
+
+    public bool Exist(Guid userId)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        connection.Open();
+        const string sql = @"
+                select exists (
+                        select 1
+                        from applications
+                        where author = @Id
+                        and   submitted_at is null)
+                ";
+
+        return connection.QuerySingleOrDefault<bool>(sql, new { Id = userId });
     }
 }

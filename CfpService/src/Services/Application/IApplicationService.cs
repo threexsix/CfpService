@@ -1,4 +1,5 @@
 using CfpService.Dtos;
+using CfpService.Dtos.Application;
 using CfpService.Models;
 
 namespace CfpService.Services;
@@ -14,4 +15,5 @@ public interface IApplicationService
     public IEnumerable<GetApplicationDto> GetSubmittedApplications(DateTime time);
     public IEnumerable<GetApplicationDto> GetUnSubmittedApplications(DateTime time);
     public GetApplicationDto GetUserUnSubmittedApplication(Guid userId);
+    public bool AnyDraftUserApplications(Guid userId);
 }

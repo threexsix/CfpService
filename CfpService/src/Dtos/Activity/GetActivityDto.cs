@@ -1,6 +1,6 @@
 namespace CfpService.Dtos.Activity;
 
-public class GetActivityDto
-{
-    
-}
+public record GetActivityDto(
+    string Name,
+    string Description
+);

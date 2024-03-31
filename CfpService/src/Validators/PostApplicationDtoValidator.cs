@@ -8,22 +8,21 @@ public class PostApplicationDtoValidator : AbstractValidator<PostApplicationDto>
 {
     public PostApplicationDtoValidator()
     {
-        RuleFor(x => x.Author).NotEmpty().WithMessage("Идентификатор пользователя обязателен.");
+        RuleFor(x => x.Author).NotEmpty().WithMessage("missing author");
 
-        // Правило для проверки, что хотя бы одно поле, кроме Author, не пустое
         RuleFor(x => x).Must(x => !string.IsNullOrWhiteSpace(x.Activity) ||
                                   !string.IsNullOrWhiteSpace(x.Name) ||
                                   !string.IsNullOrWhiteSpace(x.Description) ||
                                   !string.IsNullOrWhiteSpace(x.Outline))
-            .WithMessage("Необходимо указать хотя бы одно дополнительное поле.");
+            .WithMessage("at least one other field besides author");
 
         RuleFor(x => x.Name).MaximumLength(100).When(x => !string.IsNullOrWhiteSpace(x.Name))
-            .WithMessage("Название не должно превышать 100 символов.");
+            .WithMessage("name must not exceed 100 chars");
 
         RuleFor(x => x.Description).MaximumLength(300).When(x => !string.IsNullOrWhiteSpace(x.Description))
-            .WithMessage("Описание не должно превышать 300 символов.");
+            .WithMessage("description must not exceed 300 chars");
 
         RuleFor(x => x.Outline).MaximumLength(1000).When(x => !string.IsNullOrWhiteSpace(x.Outline))
-            .WithMessage("План не должен превышать 1000 символов.");
+            .WithMessage("outline must not exceed 1000 chars");
     }
 }

@@ -16,12 +16,12 @@ public class InitSchema : Migration
 
 		create table applications
 		(
-			id uuid primary key default gen_random_uuid(),
-			author uuid,
+			id uuid primary key default gen_random_uuid() not null,
+			author uuid not null,
 			activity varchar references activity_types(name),
 			name varchar(100),
-			description varchar,
-			outline varchar,
+			description varchar(300),
+			outline varchar(1000),
 			created_at timestamp default now(),
 			submitted_at timestamp
 		);

@@ -1,7 +1,6 @@
-using CfpService.Dtos;
-using CfpService.Models;
+using CfpService.Dtos.Application;
 
-namespace CfpService.Repositories;
+namespace CfpService.Repositories.Application;
 
 public interface IApplicationRepository
 {
@@ -13,4 +12,5 @@ public interface IApplicationRepository
     public IEnumerable<GetApplicationDto> GetSubmittedApplications(DateTime time);
     public IEnumerable<GetApplicationDto> GetUnSubmittedApplications(DateTime time);
     public GetApplicationDto GetUserUnSubmittedApplication(Guid userId);
+    public bool Exist(Guid userId);
 }

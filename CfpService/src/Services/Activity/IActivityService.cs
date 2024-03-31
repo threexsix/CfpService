@@ -1,6 +1,8 @@
+using CfpService.Dtos.Activity;
+
 namespace CfpService.Services.Activity;
 
-public class IActivityService
+public interface IActivityService
 {
-    
+    public IEnumerable<GetActivityDto> GetAllActivities();
 }

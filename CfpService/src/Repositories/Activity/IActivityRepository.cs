@@ -1,6 +1,6 @@
 using CfpService.Dtos.Activity;
 
-namespace CfpService.Repositories;
+namespace CfpService.Repositories.Activity;
 
 public interface IActivityRepository
 {

@@ -1,5 +1,7 @@
-using CfpService.Repositories;
+using CfpService.Repositories.Activity;
+using CfpService.Repositories.Application;
 using CfpService.Services;
+using CfpService.Services.Activity;
 using CfpService.Settings;
 
 namespace CfpService.Extensions;
@@ -12,7 +14,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+    public static IServiceCollection AddModelsServices(this IServiceCollection services)
     {
         AddServices(services);
         return services;
@@ -21,11 +23,13 @@ public static class ServiceCollectionExtensions
     private static void AddServices(IServiceCollection services)
     {
         services.AddScoped<IApplicationService, ApplicationService>();
+        services.AddScoped<IActivityService, ActivityService>();
     }
     
     private static void AddRepositories(IServiceCollection services)
     {
         services.AddScoped<IApplicationRepository, ApplicationRepository>();
+        services.AddScoped<IActivityRepository, ActivityRepository>();
     }
 
     public static IServiceCollection AddDalInfrastructure(this IServiceCollection services, IConfigurationRoot config)

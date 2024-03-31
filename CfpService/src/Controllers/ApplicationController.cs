@@ -1,8 +1,7 @@
-using CfpService.Dtos;
-using CfpService.Models;
+using CfpService.Dtos.Application;
 using CfpService.Services;
+using CfpService.Services.Activity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace CfpService.Controllers;
 
@@ -11,10 +10,11 @@ namespace CfpService.Controllers;
 public class ReportController : ControllerBase
 {
     private IApplicationService _applicationService;
-
-    public ReportController(IApplicationService applicationService)
+    private IActivityService _activityService;
+    public ReportController(IApplicationService applicationService, IActivityService activityService)
     {
         _applicationService = applicationService;
+        _activityService = activityService;
     }
     
     [HttpGet("[action]")]
@@ -28,11 +28,9 @@ public class ReportController : ControllerBase
     [HttpPost("[action]")]
     public ActionResult<GetApplicationDto> Add([FromBody] PostApplicationDto dto)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-  
+        if (_applicationService.AnyDraftUserApplications(dto.Author))
+            return BadRequest("cannot add, user have not-submitted application");
+        
         var createdApplication = _applicationService.AddApplication(dto);
         return CreatedAtAction(nameof(GetById), new { id = createdApplication.Id }, createdApplication);
     }
@@ -108,5 +106,13 @@ public class ReportController : ControllerBase
         var application = _applicationService.GetUserUnSubmittedApplication(userId);
         if (application == null) return NotFound();
         return Ok(application);
+    }
+    
+    [HttpGet("[action]")]
+    public ActionResult<GetApplicationDto> GetAllActivities()
+    {
+        var activities = _activityService.GetAllActivities();
+        if (activities == null) return NotFound();
+        return Ok(activities);
     }
 }

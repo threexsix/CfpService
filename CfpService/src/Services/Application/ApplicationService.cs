@@ -1,6 +1,8 @@
 using CfpService.Dtos;
+using CfpService.Dtos.Application;
 using CfpService.Models;
 using CfpService.Repositories;
+using CfpService.Repositories.Application;
 
 namespace CfpService.Services;
 
@@ -55,5 +57,10 @@ public class ApplicationService : IApplicationService
     {
         var application = _applicationRepository.GetUserUnSubmittedApplication(userId);
         return application;
+    }
+
+    public bool AnyDraftUserApplications(Guid userId)
+    {
+        return _applicationRepository.Exist(userId);
     }
 }
