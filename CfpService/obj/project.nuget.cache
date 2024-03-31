@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "CrIC5QHUQRvfzkO5I1qmJgxgSMiQ1SgGfTesbI89DV4dYQrmKlTRfzj5W1jdZxdBS4AXifMWz9L0r29u58nagQ==",
+  "success": true,
+  "projectFilePath": "/Users/leogri3x6/RiderProjects/CfpService/CfpService/CfpService.csproj",
+  "expectedPackageFiles": [
+    "/Users/leogri3x6/.nuget/packages/microsoft.aspnetcore.openapi/7.0.9/microsoft.aspnetcore.openapi.7.0.9.nupkg.sha512",
+    "/Users/leogri3x6/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "/Users/leogri3x6/.nuget/packages/microsoft.openapi/1.4.3/microsoft.openapi.1.4.3.nupkg.sha512",
+    "/Users/leogri3x6/.nuget/packages/swashbuckle.aspnetcore/6.5.0/swashbuckle.aspnetcore.6.5.0.nupkg.sha512",
+    "/Users/leogri3x6/.nuget/packages/swashbuckle.aspnetcore.swagger/6.5.0/swashbuckle.aspnetcore.swagger.6.5.0.nupkg.sha512",
+    "/Users/leogri3x6/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.5.0/swashbuckle.aspnetcore.swaggergen.6.5.0.nupkg.sha512",
+    "/Users/leogri3x6/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.5.0/swashbuckle.aspnetcore.swaggerui.6.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}
