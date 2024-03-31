@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "gZoZNur1mU1cT2Z3eBb64Fu1cI4CGkbMGnEG2WT43yk=",
+  "Source": "CfpService",
+  "BasePath": "_content/CfpService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
