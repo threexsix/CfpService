@@ -1,5 +1,14 @@
 # Common IntelliJ Platform excludes
 
+bin/
+obj/
+*.log
+*.user
+.idea/
+.vscode/
+*.userprefs
+
+
 # User specific
 **/.idea/**/workspace.xml
 **/.idea/**/tasks.xml
