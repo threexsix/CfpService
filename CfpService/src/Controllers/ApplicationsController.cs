@@ -40,9 +40,10 @@ public class ApplicationsController : ControllerBase
     [HttpGet("{applicationId}")]
     public ActionResult<GetApplicationDto> GetById(Guid applicationId)
     {
-        var application = _applicationService.GetApplicationById(applicationId);
+        if (!_applicationService.ExistByApplicationId(applicationId))
+            return NotFound();
         
-        if (application == null) return NotFound();
+        var application = _applicationService.GetApplicationById(applicationId);
         
         return Ok(application);
     }
@@ -50,6 +51,9 @@ public class ApplicationsController : ControllerBase
     [HttpPost("{applicationId}/[action]")]
     public IActionResult Submit(Guid applicationId)
     {
+        if (!_applicationService.ExistByApplicationId(applicationId))
+            return NotFound();
+        
         if (!_applicationService.IsApplicationValidToSubmit(applicationId))
         {
             return BadRequest("cannot submit, key fields are not filled in application");
@@ -93,11 +97,11 @@ public class ApplicationsController : ControllerBase
         if (!_applicationService.ExistByApplicationId(applicationId))
             return NotFound();
         
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
         if (_applicationService.IsSubmitted(applicationId))
             return BadRequest("cannot delete submitted application");
+        
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
         _applicationService.DeleteApplication(applicationId);
         
