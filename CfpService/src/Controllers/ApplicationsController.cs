@@ -37,25 +37,25 @@ public class ApplicationsController : ControllerBase
         return Ok(applications);
     }
     
-    [HttpGet("{id}")]
-    public ActionResult<GetApplicationDto> GetById(Guid id)
+    [HttpGet("{applicationId}")]
+    public ActionResult<GetApplicationDto> GetById(Guid applicationId)
     {
-        var application = _applicationService.GetApplicationById(id);
+        var application = _applicationService.GetApplicationById(applicationId);
         
         if (application == null) return NotFound();
         
         return Ok(application);
     }
     
-    [HttpPost("{id}/[action]")]
-    public IActionResult Submit(Guid id)
+    [HttpPost("{applicationId}/[action]")]
+    public IActionResult Submit(Guid applicationId)
     {
-        if (!_applicationService.IsApplicationValidToSubmit(id))
+        if (!_applicationService.IsApplicationValidToSubmit(applicationId))
         {
             return BadRequest("cannot submit, key fields are not filled in application");
         }
 
-        _applicationService.SubmitApplication(id);
+        _applicationService.SubmitApplication(applicationId);
         
         return Ok();
     }
@@ -63,40 +63,43 @@ public class ApplicationsController : ControllerBase
     [HttpPost]
     public ActionResult<GetApplicationDto> PostApplication([FromBody] PostApplicationDto dto)
     {
-        if (_applicationService.ExistUnsubmitted(dto.Author))
+        if (_applicationService.ExistUnsubmittedFromUser(dto.Author))
             return BadRequest("cannot add, user has not-submitted application");
         
         var createdApplication = _applicationService.AddApplication(dto);
-        return CreatedAtAction(nameof(GetById), new { id = createdApplication.Id }, createdApplication);
+        return CreatedAtAction(nameof(GetById), new { applicationId = createdApplication.Id }, createdApplication);
     }
     
-    [HttpPut("{id}")]
-    public ActionResult<GetApplicationDto> EditNotSubmittedApplication(Guid id, [FromBody] PutApplicationDto dto)
+    [HttpPut("{applicationId}")]
+    public ActionResult<GetApplicationDto> EditNotSubmittedApplication(Guid applicationId, [FromBody] PutApplicationDto dto)
     {
-        if (!_applicationService.ExistUnsubmitted(id))
+        if (!_applicationService.ExistByApplicationId(applicationId))
             return NotFound();
         
-        if (_applicationService.IsSubmitted(id))
+        if (_applicationService.IsSubmitted(applicationId))
             return BadRequest("cannot edit submitted application");
         
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
   
-        var alteredApplication = _applicationService.EditApplication(id, dto);
+        var alteredApplication = _applicationService.EditApplication(applicationId, dto);
         
-        return CreatedAtAction(nameof(GetById), new { id = alteredApplication.Id }, alteredApplication);
+        return CreatedAtAction(nameof(GetById), new { applicationId = alteredApplication.Id }, alteredApplication);
     }
 
-    [HttpDelete("{id}")]
-    public IActionResult Delete(Guid id)
+    [HttpDelete("{applicationId}")]
+    public IActionResult Delete(Guid applicationId)
     {
+        if (!_applicationService.ExistByApplicationId(applicationId))
+            return NotFound();
+        
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        if (_applicationService.IsSubmitted(id))
+        if (_applicationService.IsSubmitted(applicationId))
             return BadRequest("cannot delete submitted application");
 
-        _applicationService.DeleteApplication(id);
+        _applicationService.DeleteApplication(applicationId);
         
         return Ok();
     }

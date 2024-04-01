@@ -174,7 +174,21 @@ public class ApplicationRepository : IApplicationRepository
         return connection.QuerySingleOrDefault<GetApplicationDto>(sql, new { Id = userId });
     }
 
-    public bool Exist(Guid userId)
+    public bool ExistByApplicationId(Guid applicationId)
+    {
+        using var connection = new NpgsqlConnection(_connectionString);
+        connection.Open();
+        const string sql = @"
+                select exists (
+                        select 1
+                        from applications
+                        where id = @Id)
+                ";
+
+        return connection.QuerySingleOrDefault<bool>(sql, new { Id = applicationId });
+    }
+    
+    public bool ExistUserDraft(Guid userId)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();

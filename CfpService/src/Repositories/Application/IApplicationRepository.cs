@@ -12,6 +12,7 @@ public interface IApplicationRepository
     public IEnumerable<GetApplicationDto> GetSubmittedApplications(DateTime time);
     public IEnumerable<GetApplicationDto> GetUnSubmittedApplications(DateTime time);
     public GetApplicationDto GetUserUnSubmittedApplication(Guid userId);
-    public bool Exist(Guid userId);
+    public bool ExistByApplicationId(Guid applicationId);
+    public bool ExistUserDraft(Guid userId);
     public bool IsSubmitted(Guid applicationId);
 }

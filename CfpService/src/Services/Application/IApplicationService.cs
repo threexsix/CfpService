@@ -13,7 +13,8 @@ public interface IApplicationService
     public IEnumerable<GetApplicationDto> GetSubmittedApplications(DateTime time);
     public IEnumerable<GetApplicationDto> GetUnSubmittedApplications(DateTime time);
     public GetApplicationDto GetUserUnSubmittedApplication(Guid userId);
-    public bool ExistUnsubmitted(Guid userId);
+    public bool ExistByApplicationId(Guid applicationId);
+    public bool ExistUnsubmittedFromUser(Guid userId);
     public bool IsSubmitted(Guid applicationId);
     public bool IsApplicationValidToSubmit(Guid applicationId);
 }
