@@ -75,7 +75,7 @@ public class ApplicationsController : ControllerBase
     {
         if (!_applicationService.ExistByApplicationId(applicationId))
             return NotFound();
-        
+            
         if (_applicationService.IsSubmitted(applicationId))
             return BadRequest("cannot edit submitted application");
         

@@ -1,6 +1,6 @@
+using CfpService.Infrastructure;
 using CfpService.Repositories.Activity;
 using CfpService.Repositories.Application;
-using CfpService.Services;
 using CfpService.Services.Activity;
 using CfpService.Services.Application;
 using CfpService.Settings;

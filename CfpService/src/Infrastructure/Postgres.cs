@@ -2,7 +2,7 @@ using CfpService.Settings;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.Options;
 
-namespace CfpService;
+namespace CfpService.Infrastructure;
 
 public static class Postgres
 {
