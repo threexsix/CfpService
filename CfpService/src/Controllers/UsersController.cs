@@ -6,7 +6,7 @@ using System;
 namespace CfpService.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("users")]
 public class UsersController : ControllerBase
 {
     private readonly IApplicationService _applicationService;

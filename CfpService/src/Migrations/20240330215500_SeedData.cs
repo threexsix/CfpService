@@ -10,9 +10,9 @@ public class SeedData : Migration
         const string sql = @"
             insert into activity_types (name, description) 
             values 
-            ('report', 'Доклад, 35-45 минут'),
-            ('masterclass', 'Мастеркласс, 1-2 часа'),
-            ('discussion', 'Дискуссия / круглый стол, 40-50 минут');
+            ('Report', 'Доклад, 35-45 минут'),
+            ('Masterclass', 'Мастеркласс, 1-2 часа'),
+            ('Discussion', 'Дискуссия / круглый стол, 40-50 минут');
         ";
 
         Execute.Sql(sql);
@@ -22,7 +22,7 @@ public class SeedData : Migration
     {
         const string sql = @"
             delete from activity_types 
-            where name in ('report', 'masterclass', 'discussion');
+            where name in ('Report', 'Masterclass', 'Discussion');
         ";
 
         Execute.Sql(sql);

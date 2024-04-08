@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CfpService.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("activities")]
 public class ActivitiesController : ControllerBase
 {
     private readonly IActivityService _activityService;

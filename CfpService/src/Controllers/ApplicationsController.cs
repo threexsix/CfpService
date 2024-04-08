@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CfpService.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("applications")]
 public class ApplicationsController : ControllerBase
 {
     private IApplicationService _applicationService;
@@ -15,27 +15,25 @@ public class ApplicationsController : ControllerBase
     }
     
         
-    [HttpGet("submittedAfter={timeString}")]
-    public ActionResult<IEnumerable<GetApplicationDto>> GetSubmittedAfter(string timeString)
+    [HttpGet]
+    public ActionResult<IEnumerable<GetApplicationDto>> GetApplications([FromQuery] DateTime? submittedAfter, [FromQuery] DateTime? unsubmittedOlder)
     {
-        if (!DateTime.TryParse(timeString, out var time))
-            return BadRequest("invalid date format");
-        
-        var applications = _applicationService.GetSubmittedApplications(time);
-        
-        return Ok(applications);
+        if (submittedAfter.HasValue && !unsubmittedOlder.HasValue)
+        {
+            var applications = _applicationService.GetSubmittedApplications(submittedAfter.Value);
+            return Ok(applications);
+        }
+        else if (!submittedAfter.HasValue && unsubmittedOlder.HasValue)
+        {
+            var applications = _applicationService.GetUnSubmittedApplications(unsubmittedOlder.Value);
+            return Ok(applications);
+        }
+        else
+        {
+            return BadRequest("Please specify exactly one of the following query parameters: 'submittedAfter' or 'unsubmittedOlder'.");
+        }
     }
-    
-    [HttpGet("unsubmittedOlder={timeString}")]
-    public ActionResult<IEnumerable<GetApplicationDto>> GetUnsubmittedOlder(string timeString)
-    {
-        if (!DateTime.TryParse(timeString, out var time))
-            return BadRequest("invalid date format");
-        
-        var applications = _applicationService.GetUnSubmittedApplications(time);
-        
-        return Ok(applications);
-    }
+
     
     [HttpGet("{applicationId}")]
     public ActionResult<GetApplicationDto> GetById(Guid applicationId)
@@ -48,7 +46,7 @@ public class ApplicationsController : ControllerBase
         return Ok(application);
     }
     
-    [HttpPost("{applicationId}/[action]")]
+    [HttpPost("{applicationId}/submit")]
     public IActionResult Submit(Guid applicationId)
     {
         if (!_applicationService.ExistByApplicationId(applicationId))
