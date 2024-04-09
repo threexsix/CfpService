@@ -20,7 +20,9 @@ public class UsersController : ControllerBase
     public ActionResult<GetApplicationDto> GetCurrentApplication(Guid userId)
     {
         var application = _applicationService.GetUserUnSubmittedApplication(userId);
-        if (application == null) return NotFound();
+        if (application == null) 
+            return BadRequest("user doesn't have any submitted applications");
+        
         return Ok(application);
     }
 }

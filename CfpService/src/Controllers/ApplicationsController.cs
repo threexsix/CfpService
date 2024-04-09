@@ -39,7 +39,7 @@ public class ApplicationsController : ControllerBase
     public ActionResult<GetApplicationDto> GetById(Guid applicationId)
     {
         if (!_applicationService.ExistByApplicationId(applicationId))
-            return NotFound();
+            return BadRequest("cannot get, application does not exist");
         
         var application = _applicationService.GetApplicationById(applicationId);
         
@@ -50,7 +50,7 @@ public class ApplicationsController : ControllerBase
     public IActionResult Submit(Guid applicationId)
     {
         if (!_applicationService.ExistByApplicationId(applicationId))
-            return NotFound();
+            return BadRequest("cannot submit, application does not exist");
         
         if (!_applicationService.IsApplicationValidToSubmit(applicationId))
         {
@@ -76,7 +76,7 @@ public class ApplicationsController : ControllerBase
     public ActionResult<GetApplicationDto> EditNotSubmittedApplication(Guid applicationId, [FromBody] PutApplicationDto dto)
     {
         if (!_applicationService.ExistByApplicationId(applicationId))
-            return NotFound();
+            return BadRequest("cannot edit, application does not exist");
             
         if (_applicationService.IsSubmitted(applicationId))
             return BadRequest("cannot edit submitted application");
@@ -93,7 +93,7 @@ public class ApplicationsController : ControllerBase
     public IActionResult Delete(Guid applicationId)
     {
         if (!_applicationService.ExistByApplicationId(applicationId))
-            return NotFound();
+            return BadRequest("cannot delete, application does not exist");
         
         if (_applicationService.IsSubmitted(applicationId))
             return BadRequest("cannot delete submitted application");
