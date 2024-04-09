@@ -19,8 +19,6 @@ public class ActivitiesController : ControllerBase
     public ActionResult<IEnumerable<GetActivityDto>> GetAllActivities()
     {
         var activities = _activityService.GetAllActivities();
-        if (activities == null) 
-            return BadRequest("no activity found");
         return Ok(activities);
     }
 }

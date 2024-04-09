@@ -14,6 +14,11 @@ public class ActivityService : IActivityService
 
     public IEnumerable<GetActivityDto> GetAllActivities()
     {
-        return _activityRepository.GetAllActivities();
+        var activities = _activityRepository.GetAllActivities();
+        
+        if (activities == null) 
+            throw new  ArgumentException("no activity found");
+        
+        return activities;
     }
 }

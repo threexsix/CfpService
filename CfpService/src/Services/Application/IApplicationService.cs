@@ -4,6 +4,7 @@ namespace CfpService.Services.Application;
 
 public interface IApplicationService
 {
+    public IEnumerable<GetApplicationDto> GetApplications(DateTime? submittedAfter, DateTime? unsubmittedOlder);
     public GetApplicationDto AddApplication(PostApplicationDto dto);
     public GetApplicationDto GetApplicationById(Guid id);
     public GetApplicationDto EditApplication(Guid id, PutApplicationDto dto);
