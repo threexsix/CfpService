@@ -1,4 +1,5 @@
 using CfpService.Dtos.Application;
+using CfpService.Mappers.ApplicationMapper;
 using CfpService.Repositories.Application;
 
 namespace CfpService.Services.Application;
@@ -6,10 +7,12 @@ namespace CfpService.Services.Application;
 public class ApplicationService : IApplicationService
 {
     private readonly IApplicationRepository _applicationRepository;
+    private readonly IApplicationMapper _mapper;
 
-    public ApplicationService(IApplicationRepository applicationRepository)
+    public ApplicationService(IApplicationRepository applicationRepository, IApplicationMapper mapper)
     {
         _applicationRepository = applicationRepository;
+        _mapper = mapper;
     }
 
     public  IEnumerable<GetApplicationDto> GetApplications(DateTime? submittedAfter, DateTime? unsubmittedOlder)
@@ -21,28 +24,32 @@ public class ApplicationService : IApplicationService
 
         if (submittedAfter.HasValue)
         {
-            return _applicationRepository.GetSubmittedApplications(submittedAfter.Value);
+            return GetSubmittedApplications(submittedAfter.Value);
         }
         else
         {
-            return _applicationRepository.GetUnSubmittedApplications(unsubmittedOlder.Value);
+            return GetUnSubmittedApplications(unsubmittedOlder.Value);
         }
     }
     public GetApplicationDto AddApplication(PostApplicationDto dto)
     {
         if (ExistUnsubmittedFromUser(dto.Author))
             throw new ArgumentException("cannot add, user has not-submitted application");
-        
-        return _applicationRepository.Add(dto);
-    }
 
+        var application = _mapper.ToEntity(dto);
+        var addedApplication = _applicationRepository.Add(application);
+        
+        return _mapper.ToDto(addedApplication);
+    }
 
     public GetApplicationDto GetApplicationById(Guid id)
     {
         if (!ExistByApplicationId(id))
             throw new KeyNotFoundException($"application with id {id} not found");
         
-        return _applicationRepository.GetById(id);
+        var application = _applicationRepository.GetById(id);
+        
+        return _mapper.ToDto(application);
     }
 
     public GetApplicationDto EditApplication(PutApplicationDto dto)
@@ -53,8 +60,11 @@ public class ApplicationService : IApplicationService
         if (IsSubmitted(dto.Id))
             throw new ArgumentException("cannot edit submitted application");
 
+        var application = _applicationRepository.GetById(dto.Id);
         
-        return _applicationRepository.Put(dto);
+        var alteredApplication = _applicationRepository.Put(_mapper.ToEntity(dto, application));
+        
+        return _mapper.ToDto(alteredApplication);
     }
 
     public void DeleteApplication(Guid id)
@@ -81,13 +91,13 @@ public class ApplicationService : IApplicationService
 
     public IEnumerable<GetApplicationDto> GetSubmittedApplications(DateTime time)
     {
-        var applications = _applicationRepository.GetSubmittedApplications(time);
+        var applications = _applicationRepository.GetSubmittedApplications(time).Select(x => _mapper.ToDto(x));
         return applications;
     }
     
     public IEnumerable<GetApplicationDto> GetUnSubmittedApplications(DateTime time)
     {
-        var applications = _applicationRepository.GetUnSubmittedApplications(time);
+        var applications = _applicationRepository.GetUnSubmittedApplications(time).Select(x => _mapper.ToDto(x));
         return applications;
     }
 
@@ -98,7 +108,7 @@ public class ApplicationService : IApplicationService
         if (application == null) 
             throw new ArgumentException("user doesn't have any submitted applications");
         
-        return application;
+        return _mapper.ToDto(application);
     }
 
     public bool ExistByApplicationId(Guid applicationId)

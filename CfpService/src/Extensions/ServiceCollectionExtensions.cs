@@ -1,4 +1,5 @@
 using CfpService.Infrastructure;
+using CfpService.Mappers.ApplicationMapper;
 using CfpService.Repositories.Activity;
 using CfpService.Repositories.Application;
 using CfpService.Services.Activity;
@@ -23,6 +24,7 @@ public static class ServiceCollectionExtensions
     
     private static void AddServices(IServiceCollection services)
     {
+        services.AddScoped<IApplicationMapper, ApplicationMapper>();
         services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<IActivityService, ActivityService>();
     }
@@ -36,6 +38,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDalInfrastructure(this IServiceCollection services, IConfigurationRoot config)
     {
         services.Configure<DbSettings>(config.GetSection(nameof(DbSettings)));
+        Postgres.MapSettings();
         Postgres.AddMigrations(services);
         return services;
     }

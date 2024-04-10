@@ -4,5 +4,5 @@ namespace CfpService.Repositories.Activity;
 
 public interface IActivityRepository
 {
-    public IEnumerable<GetActivityDto> GetAllActivities();
+    public IEnumerable<Entities.Activity> GetAllActivities();
 }

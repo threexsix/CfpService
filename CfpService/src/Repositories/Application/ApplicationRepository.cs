@@ -1,5 +1,3 @@
-using CfpService.Dtos;
-using CfpService.Dtos.Application;
 using CfpService.Settings;
 using Dapper;
 using Microsoft.Extensions.Options;
@@ -16,7 +14,7 @@ public class ApplicationRepository : IApplicationRepository
         _connectionString = options.Value.PostgresConnectionString;
     }
     
-    public GetApplicationDto GetById(Guid id)
+    public Entities.Application GetById(Guid id)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -26,15 +24,17 @@ public class ApplicationRepository : IApplicationRepository
                         activity,
                         name,
                         description,
-                        outline
+                        outline,
+                        created_at,
+                        submitted_at
                 from    applications
                 where   id = @Id
                 ";
             
-        return connection.QuerySingleOrDefault<GetApplicationDto>(sql, new { Id = id });
+        return connection.QuerySingleOrDefault<Entities.Application>(sql, new { Id = id });
     }
 
-    public GetApplicationDto Add(PostApplicationDto dto)
+    public Entities.Application Add(Entities.Application application)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -45,45 +45,51 @@ public class ApplicationRepository : IApplicationRepository
                     activity,
                     name,
                     description,
-                    outline
+                    outline,
+                    created_at,
+                    submitted_at
                     )
             values  (
                      @Author,
                      @Activity,
                      @Name,
                      @Description,
-                     @Outline
+                     @Outline,
+                     @CreatedAt,
+                     @SubmittedAt
                     )
-            returning id, author, activity, name, description, outline;
+            returning id, author, activity, name, description, outline, created_at, submitted_at;
             ";
-        return connection.QueryFirstOrDefault<GetApplicationDto>(sql, dto);
+        return connection.QueryFirstOrDefault<Entities.Application>(sql, application);
     }
 
 
-    public GetApplicationDto Put(PutApplicationDto dto)
+    public Entities.Application Put(Entities.Application application)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
         const string sql = @"
             update applications
-        set         activity = @Activity,
+            
+            set     activity = @Activity,
                     name = @Name,
                     description = @Description,
                     outline = @Outline
         
-        where       id = @Id
-        and         submitted_at is null
-        returning id, author, activity, name, description, outline;
+            where   id = @Id
+            and     submitted_at is null
+            
+            returning id, author, activity, name, description, outline, created_at, submitted_at;
         ";
         var parameters = new
         {
-            Id = dto.Id,
-            Activity = dto.Activity,
-            Name = dto.Name,
-            Description = dto.Description,
-            Outline = dto.Outline
+            Id = application.Id,
+            Activity = application.Activity,
+            Name = application.Name,
+            Description = application.Description,
+            Outline = application.Outline
         };
-        return connection.QueryFirstOrDefault<GetApplicationDto>(sql, parameters);
+        return connection.QueryFirstOrDefault<Entities.Application>(sql, parameters);
     }
 
     public void Delete(Guid id)
@@ -118,7 +124,7 @@ public class ApplicationRepository : IApplicationRepository
         connection.Execute(sql, parameters);
     }
 
-    public IEnumerable<GetApplicationDto> GetSubmittedApplications(DateTime time)
+    public IEnumerable<Entities.Application> GetSubmittedApplications(DateTime time)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -128,15 +134,19 @@ public class ApplicationRepository : IApplicationRepository
                         activity,
                         name,
                         description,
-                        outline
+                        outline,
+                        created_at,
+                        submitted_at
+                
                 from    applications
+                
                 where   submitted_at >= @Time
         ";
 
-        return connection.Query<GetApplicationDto>(sql, new { Time = time });
+        return connection.Query<Entities.Application>(sql, new { Time = time });
     }
     
-    public IEnumerable<GetApplicationDto> GetUnSubmittedApplications(DateTime time)
+    public IEnumerable<Entities.Application> GetUnSubmittedApplications(DateTime time)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -146,16 +156,20 @@ public class ApplicationRepository : IApplicationRepository
                         activity,
                         name,
                         description,
-                        outline
+                        outline,
+                        created_at,
+                        submitted_at
+                
                 from    applications
+                
                 where   created_at > @Time
                 and     submitted_at is null
                 ";
 
-        return connection.Query<GetApplicationDto>(sql, new { Time = time });
+        return connection.Query<Entities.Application>(sql, new { Time = time });
     }
 
-    public GetApplicationDto GetUserUnSubmittedApplication(Guid userId)
+    public Entities.Application GetUserUnSubmittedApplication(Guid userId)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -165,13 +179,17 @@ public class ApplicationRepository : IApplicationRepository
                         activity,
                         name,
                         description,
-                        outline
+                        outline,
+                        created_at,
+                        submitted_at
+                
                 from    applications
+                
                 where   author = @Id
                 and     submitted_at is null
                 ";
 
-        return connection.QuerySingleOrDefault<GetApplicationDto>(sql, new { Id = userId });
+        return connection.QuerySingleOrDefault<Entities.Application>(sql, new { Id = userId });
     }
 
     public bool ExistByApplicationId(Guid applicationId)
@@ -179,10 +197,14 @@ public class ApplicationRepository : IApplicationRepository
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
         const string sql = @"
-                select exists (
-                        select 1
-                        from applications
-                        where id = @Id)
+                select exists 
+                (
+                select 1
+                
+                from   applications
+                
+                where  id = @Id
+                )
                 ";
 
         return connection.QuerySingleOrDefault<bool>(sql, new { Id = applicationId });
@@ -193,11 +215,15 @@ public class ApplicationRepository : IApplicationRepository
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
         const string sql = @"
-                select exists (
-                        select 1
-                        from applications
-                        where author = @Id
-                        and   submitted_at is null)
+                select exists 
+                    (
+                    select 1
+                    
+                    from   applications
+                    
+                    where  author = @Id
+                    and    submitted_at is null
+                    )
                 ";
 
         return connection.QuerySingleOrDefault<bool>(sql, new { Id = userId });
@@ -208,11 +234,15 @@ public class ApplicationRepository : IApplicationRepository
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
         const string sql = @"
-                select exists (
-                        select 1
-                        from applications
-                        where id = @Id
-                        and   submitted_at is not null)
+                select exists 
+                    (
+                    select 1
+                    
+                    from   applications
+                    
+                    where  id = @Id
+                    and    submitted_at is not null
+                    )
                 ";
 
         return connection.QuerySingleOrDefault<bool>(sql, new { Id = applicationId });

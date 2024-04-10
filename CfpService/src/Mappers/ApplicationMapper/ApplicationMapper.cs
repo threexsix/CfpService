@@ -3,9 +3,9 @@ using CfpService.Entities;
 
 namespace CfpService.Mappers.ApplicationMapper;
 
-public class ApplicationMapper
+public  class ApplicationMapper : IApplicationMapper
 {
-    public static GetApplicationDto ToDto( Application entity)
+    public GetApplicationDto ToDto( Application entity)
     {
         return new GetApplicationDto
         (
@@ -18,7 +18,7 @@ public class ApplicationMapper
         );
     }
 
-    public static Application ToEntity(PostApplicationDto dto)
+    public Application ToEntity(PostApplicationDto dto)
     {
         return new Application
         (
@@ -33,7 +33,7 @@ public class ApplicationMapper
         );
     }
     
-    public static Application ToEntity(PutApplicationDto dto, Application existingApplication)
+    public Application ToEntity(PutApplicationDto dto, Application existingApplication)
     {
         return new Application
         (
