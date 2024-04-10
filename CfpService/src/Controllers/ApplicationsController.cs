@@ -48,7 +48,7 @@ public class ApplicationsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
   
-        var alteredApplication = _applicationService.EditApplication(applicationId, dto);
+        var alteredApplication = _applicationService.EditApplication(dto with {Id = applicationId});
         return Ok(alteredApplication);
     }
 

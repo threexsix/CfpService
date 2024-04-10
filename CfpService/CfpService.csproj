@@ -22,7 +22,7 @@
 
     <ItemGroup>
       <Folder Include="src\Commands\" />
-      <Folder Include="src\Entities\" />
+      <Folder Include="src\Mappers\ActivityMapper\" />
     </ItemGroup>
 
 </Project>

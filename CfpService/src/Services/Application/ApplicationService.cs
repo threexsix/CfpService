@@ -45,16 +45,16 @@ public class ApplicationService : IApplicationService
         return _applicationRepository.GetById(id);
     }
 
-    public GetApplicationDto EditApplication(Guid id, PutApplicationDto dto)
+    public GetApplicationDto EditApplication(PutApplicationDto dto)
     {
-        if (!ExistByApplicationId(id))
-            throw new KeyNotFoundException($"application with id {id} not found");
+        if (!ExistByApplicationId(dto.Id))
+            throw new KeyNotFoundException($"application with id {dto.Id} not found");
             
-        if (IsSubmitted(id))
+        if (IsSubmitted(dto.Id))
             throw new ArgumentException("cannot edit submitted application");
 
         
-        return _applicationRepository.Put(id, dto);
+        return _applicationRepository.Put(dto);
     }
 
     public void DeleteApplication(Guid id)

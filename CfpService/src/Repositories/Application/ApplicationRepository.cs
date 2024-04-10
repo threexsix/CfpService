@@ -60,12 +60,12 @@ public class ApplicationRepository : IApplicationRepository
     }
 
 
-    public GetApplicationDto Put(Guid id, PutApplicationDto dto)
+    public GetApplicationDto Put(PutApplicationDto dto)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
         const string sql = @"
-        update applications
+            update applications
         set         activity = @Activity,
                     name = @Name,
                     description = @Description,
@@ -77,7 +77,7 @@ public class ApplicationRepository : IApplicationRepository
         ";
         var parameters = new
         {
-            Id = id,
+            Id = dto.Id,
             Activity = dto.Activity,
             Name = dto.Name,
             Description = dto.Description,
