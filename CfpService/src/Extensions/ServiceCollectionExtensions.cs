@@ -1,4 +1,5 @@
 using CfpService.Infrastructure;
+using CfpService.Mappers.ActivityMapper;
 using CfpService.Mappers.ApplicationMapper;
 using CfpService.Repositories.Activity;
 using CfpService.Repositories.Application;
@@ -25,6 +26,7 @@ public static class ServiceCollectionExtensions
     private static void AddServices(IServiceCollection services)
     {
         services.AddScoped<IApplicationMapper, ApplicationMapper>();
+        services.AddScoped<IActivityMapper, ActivityMapper>();
         services.AddScoped<IApplicationService, ApplicationService>();
         services.AddScoped<IActivityService, ActivityService>();
     }

@@ -38,6 +38,9 @@ public class ApplicationsController : ControllerBase
     [HttpPost]
     public ActionResult<GetApplicationDto> PostApplication([FromBody] PostApplicationDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         var createdApplication = _applicationService.AddApplication(dto);
         return Ok(createdApplication);
     }
@@ -55,9 +58,6 @@ public class ApplicationsController : ControllerBase
     [HttpDelete("{applicationId}")]
     public IActionResult Delete(Guid applicationId)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         _applicationService.DeleteApplication(applicationId);
         return Ok();
     }
