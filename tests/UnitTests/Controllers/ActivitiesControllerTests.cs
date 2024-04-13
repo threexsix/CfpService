@@ -1,6 +1,6 @@
+using CfpService.Application.Services.Activity;
+using CfpService.Contracts.Dtos.Activity;
 using CfpService.Controllers;
-using CfpService.Dtos.Activity;
-using CfpService.Services.Activity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
