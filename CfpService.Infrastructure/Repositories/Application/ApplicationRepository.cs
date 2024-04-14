@@ -16,7 +16,7 @@ public class ApplicationRepository : IApplicationRepository
         _connectionString = options.Value.PostgresConnectionString;
     }
     
-    public ConferenceApplication GetById(Guid id)
+    public ConferenceApplication? GetById(Guid id)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -36,7 +36,7 @@ public class ApplicationRepository : IApplicationRepository
         return connection.QuerySingleOrDefault<ConferenceApplication>(sql, new { Id = id });
     }
 
-    public ConferenceApplication Add(ConferenceApplication application)
+    public ConferenceApplication? Add(ConferenceApplication application)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -66,7 +66,7 @@ public class ApplicationRepository : IApplicationRepository
     }
 
 
-    public ConferenceApplication Put(ConferenceApplication application)
+    public ConferenceApplication? Put(ConferenceApplication application)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -85,11 +85,11 @@ public class ApplicationRepository : IApplicationRepository
         ";
         var parameters = new
         {
-            Id = application.Id,
-            Activity = application.Activity,
-            Name = application.Name,
-            Description = application.Description,
-            Outline = application.Outline
+            application.Id,
+            application.Activity,
+            application.Name,
+            application.Description,
+            application.Outline
         };
         return connection.QueryFirstOrDefault<ConferenceApplication>(sql, parameters);
     }
@@ -126,7 +126,7 @@ public class ApplicationRepository : IApplicationRepository
         connection.Execute(sql, parameters);
     }
 
-    public IEnumerable<ConferenceApplication> GetSubmittedApplications(DateTime time)
+    public List<ConferenceApplication> GetSubmittedApplications(DateTime time)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -145,10 +145,10 @@ public class ApplicationRepository : IApplicationRepository
                 where   submitted_at >= @Time
         ";
 
-        return connection.Query<ConferenceApplication>(sql, new { Time = time });
+        return connection.Query<ConferenceApplication>(sql, new { Time = time }).ToList();
     }
     
-    public IEnumerable<ConferenceApplication> GetUnSubmittedApplications(DateTime time)
+    public List<ConferenceApplication> GetUnSubmittedApplications(DateTime time)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -168,10 +168,10 @@ public class ApplicationRepository : IApplicationRepository
                 and     submitted_at is null
                 ";
 
-        return connection.Query<ConferenceApplication>(sql, new { Time = time });
+        return connection.Query<ConferenceApplication>(sql, new { Time = time }).ToList();
     }
 
-    public ConferenceApplication GetUserUnSubmittedApplication(Guid userId)
+    public ConferenceApplication? GetUserUnSubmittedApplication(Guid userId)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -212,7 +212,7 @@ public class ApplicationRepository : IApplicationRepository
         return connection.QuerySingleOrDefault<bool>(sql, new { Id = applicationId });
     }
     
-    public bool ExistUserDraft(Guid userId)
+    public bool ExistUnsubmittedFromUser(Guid userId)
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();

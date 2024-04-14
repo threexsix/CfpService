@@ -16,7 +16,7 @@ public class ActivityRepository : IActivityRepository
         _connectionString = options.Value.PostgresConnectionString;
     }
 
-    public IEnumerable<ApplicationActivity> GetAllActivities()
+    public List<ApplicationActivity> GetAllActivities()
     {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
@@ -25,6 +25,6 @@ public class ActivityRepository : IActivityRepository
                 from    activity_types
                 ";
 
-        return connection.Query<ApplicationActivity>(sql);
+        return connection.Query<ApplicationActivity>(sql).ToList();
     }
 }

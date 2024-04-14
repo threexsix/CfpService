@@ -1,10 +1,11 @@
+using CfpService.Application.Entities;
 using CfpService.Contracts.Dtos.Application;
 
 namespace CfpService.Application.Mappers.ApplicationMapper;
 
 public  class ApplicationMapper : IApplicationMapper
 {
-    public GetApplicationDto ToDto( Entities.ConferenceApplication entity)
+    public GetApplicationDto ToDto( ConferenceApplication? entity)
     {
         return new GetApplicationDto
         (
@@ -32,7 +33,7 @@ public  class ApplicationMapper : IApplicationMapper
         );
     }
     
-    public Entities.ConferenceApplication ToEntity(PutApplicationDto dto, Entities.ConferenceApplication existingConferenceApplication)
+    public Entities.ConferenceApplication ToEntity(PutApplicationDto dto, ConferenceApplication? existingConferenceApplication)
     {
         return new Entities.ConferenceApplication
         (

@@ -1,5 +1,6 @@
-using CfpService.Application.Services.Application;
+using CfpService.Application.Queries.Application;
 using CfpService.Contracts.Dtos.Application;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CfpService.Controllers;
@@ -8,17 +9,14 @@ namespace CfpService.Controllers;
 [Route("users")]
 public class UsersController : ControllerBase
 {
-    private readonly IApplicationService _applicationService;
-
-    public UsersController(IApplicationService applicationService)
-    {
-        _applicationService = applicationService;
-    }
+    private readonly IMediator _mediator;
 
     [HttpGet("{userId}/currentapplication")]
-    public ActionResult<GetApplicationDto> GetCurrentApplication(Guid userId)
+    public async Task<ActionResult<GetApplicationDto>> GetCurrentApplication(Guid userId)
     {
-        var application = _applicationService.GetUserUnSubmittedApplication(userId);
-        return Ok(application);
+        var query = new GetUnSubmittedApplicationByUserIdQuery(userId);
+        var result = await _mediator.Send(query);
+
+        return Ok(result);
     }
 }

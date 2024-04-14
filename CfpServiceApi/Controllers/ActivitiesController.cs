@@ -1,5 +1,6 @@
-using CfpService.Application.Services.Activity;
+using CfpService.Application.Queries.Activity;
 using CfpService.Contracts.Dtos.Activity;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CfpService.Controllers;
@@ -8,17 +9,20 @@ namespace CfpService.Controllers;
 [Route("activities")]
 public class ActivitiesController : ControllerBase
 {
-    private readonly IActivityService _activityService;
+    private readonly IMediator _mediator;
 
-    public ActivitiesController(IActivityService activityService)
+    public ActivitiesController(IMediator mediator)
     {
-        _activityService = activityService;
+        _mediator = mediator;
     }
-    
+
+
     [HttpGet]
-    public ActionResult<IEnumerable<GetActivityDto>> GetAllActivities()
+    public async Task<ActionResult<List<GetActivityDto>>> GetAllActivities()
     {
-        var activities = _activityService.GetAllActivities();
-        return Ok(activities);
+        var query = new GetAllActivitiesQuery();
+        var result = await _mediator.Send(query);
+
+        return Ok(result);
     }
 }
