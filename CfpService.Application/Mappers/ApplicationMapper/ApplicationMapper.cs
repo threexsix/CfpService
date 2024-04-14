@@ -18,9 +18,9 @@ public  class ApplicationMapper : IApplicationMapper
         );
     }
 
-    public Entities.ConferenceApplication ToEntity(PostApplicationDto dto)
+    public ConferenceApplication ToEntity(PostApplicationDto dto)
     {
-        return new Entities.ConferenceApplication
+        return new ConferenceApplication
         (
             new Guid(),
             dto.Author,
@@ -33,11 +33,11 @@ public  class ApplicationMapper : IApplicationMapper
         );
     }
     
-    public Entities.ConferenceApplication ToEntity(PutApplicationDto dto, ConferenceApplication? existingConferenceApplication)
+    public ConferenceApplication ToEntity(PutApplicationDto dto, ConferenceApplication? existingConferenceApplication)
     {
-        return new Entities.ConferenceApplication
+        return new ConferenceApplication
         (
-            new Guid(),
+            existingConferenceApplication.Id,
             existingConferenceApplication.Author,
             dto.Activity,
             dto.Name,

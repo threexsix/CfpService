@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfpServiceApi", "CfpServiceApi\CfpServiceApi.csproj", "{A4E4F2EB-8845-408F-8704-FE710B80955A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfpService.Api", "CfpService.Api\CfpService.Api.csproj", "{A4E4F2EB-8845-408F-8704-FE710B80955A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfpService.Application", "CfpService.Application\CfpService.Application.csproj", "{C6F04A98-0E1F-4D26-A52A-7C345C65C356}"
 EndProject

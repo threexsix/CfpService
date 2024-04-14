@@ -74,7 +74,7 @@ public class ApplicationsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        var command = new EditApplicationCommand(dto);
+        var command = new EditApplicationCommand(applicationId, dto);
         var result = await _mediator.Send(command);
         
         if (result.Failure)

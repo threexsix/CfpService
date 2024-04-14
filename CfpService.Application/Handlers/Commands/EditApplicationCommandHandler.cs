@@ -21,12 +21,12 @@ public class EditApplicationCommandHandler : IRequestHandler<EditApplicationComm
     
     public async Task<Result<GetApplicationDto>> Handle(EditApplicationCommand request, CancellationToken cancellationToken)
     {
-        var application = await _repository.GetById(request.Dto.Id);
+        var application = await _repository.GetById(request.ApplicationId);
         
         if (application == null)
-            return Result.Fail<GetApplicationDto>(ApplicationErrors.ApplicationNotFound(request.Dto.Id));
+            return Result.Fail<GetApplicationDto>(ApplicationErrors.ApplicationNotFound(request.ApplicationId));
             
-        if (await _repository.IsSubmitted(request.Dto.Id))
+        if (await _repository.IsSubmitted(request.ApplicationId))
             return Result.Fail<GetApplicationDto>(ApplicationErrors.CannotEditSubmittedApplication());
         
         var alteredApplication = await _repository.Put(_mapper.ToEntity(request.Dto, application));

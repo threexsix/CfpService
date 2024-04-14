@@ -4,4 +4,4 @@ using MediatR;
 
 namespace CfpService.Application.Commands.Application;
 
-public record EditApplicationCommand(PutApplicationDto Dto) : IRequest<Result<GetApplicationDto>>;
+public record EditApplicationCommand(Guid ApplicationId, PutApplicationDto Dto) : IRequest<Result<GetApplicationDto>>;
