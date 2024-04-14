@@ -19,4 +19,7 @@ public static class ApplicationErrors
     
     public static IError CannotSubmitInvalidApplication() =>
         new Error(400, "Cannot submit, missing key fields");
+    
+    public static IError AlreadySubmittedApplication() =>
+        new Error(400, "Application was already submitted");
 }

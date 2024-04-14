@@ -22,6 +22,9 @@ public class DeleteApplicationCommandHandler : IRequestHandler<DeleteApplication
         if (!exists) 
             return Result.Fail(ApplicationErrors.ApplicationNotFound(request.Id));
         
+        if (await _repository.IsSubmitted(request.Id))
+            return Result.Fail(ApplicationErrors.AlreadySubmittedApplication());
+        
         await _repository.Delete(request.Id);
         return Result.Ok();
     }

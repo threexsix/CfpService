@@ -19,7 +19,6 @@ public class AddApplicationCommandHandler : IRequestHandler<AddApplicationComman
         _mapper = mapper;
     }
 
-
     public async Task<Result<GetApplicationDto>> Handle(AddApplicationCommand request, CancellationToken cancellationToken)
     {
         if (await _repository.ExistUnsubmittedFromUser(request.Dto.Author))

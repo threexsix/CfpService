@@ -20,6 +20,9 @@ public class SubmitApplicationCommandHandler : IRequestHandler<SubmitApplication
         if (await _repository.ExistByApplicationId(request.Id) == false)
             return Result.Fail(ApplicationErrors.ApplicationNotFound(request.Id));
 
+        if (await _repository.IsSubmitted(request.Id))
+            return Result.Fail(ApplicationErrors.AlreadySubmittedApplication());
+        
         if (await IsApplicationValidToSubmit(request.Id) == false)
             return Result.Fail(ApplicationErrors.CannotSubmitInvalidApplication());
         

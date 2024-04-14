@@ -11,6 +11,11 @@ public class UsersController : ControllerBase
 {
     private readonly IMediator _mediator;
 
+    public UsersController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
     [HttpGet("{userId}/currentapplication")]
     public async Task<ActionResult<GetApplicationDto>> GetCurrentApplication(Guid userId)
     {
