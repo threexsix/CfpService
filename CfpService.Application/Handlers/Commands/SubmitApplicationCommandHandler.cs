@@ -1,10 +1,12 @@
 using CfpService.Application.Commands.Application;
 using CfpService.Application.Repositories.Application;
+using CfpService.Contracts.Errors;
+using CfpService.Contracts.Results;
 using MediatR;
 
 namespace CfpService.Application.Handlers.Commands;
 
-public class SubmitApplicationCommandHandler : IRequestHandler<SubmitApplicationCommand>
+public class SubmitApplicationCommandHandler : IRequestHandler<SubmitApplicationCommand, Result>
 {
     private readonly IApplicationRepository _repository;
 
@@ -13,15 +15,17 @@ public class SubmitApplicationCommandHandler : IRequestHandler<SubmitApplication
         _repository = repository;
     }
 
-    public async Task Handle(SubmitApplicationCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SubmitApplicationCommand request, CancellationToken cancellationToken)
     {
         if (await _repository.ExistByApplicationId(request.Id) == false)
-            throw new KeyNotFoundException($"application with id {request.Id} not found");
-        
+            return Result.Fail(ApplicationErrors.ApplicationNotFound(request.Id));
+
         if (await IsApplicationValidToSubmit(request.Id) == false)
-            throw new ArgumentException("cannot submit, key fields are not filled in application");
+            return Result.Fail(ApplicationErrors.CannotSubmitInvalidApplication());
         
         await _repository.Submit(request.Id);
+        
+        return Result.Ok();
     }
     
     private async Task<bool> IsApplicationValidToSubmit(Guid applicationId)

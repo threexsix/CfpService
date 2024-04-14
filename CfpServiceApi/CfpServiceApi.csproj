@@ -9,13 +9,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\CfpService.Application\CfpService.Application.csproj" />
+        <ProjectReference Include="..\CfpService.Infrastructure\CfpService.Infrastructure.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\CfpService.Application\CfpService.Application.csproj" />
-      <ProjectReference Include="..\CfpService.Infrastructure\CfpService.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

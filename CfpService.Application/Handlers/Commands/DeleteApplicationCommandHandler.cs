@@ -1,10 +1,12 @@
 using CfpService.Application.Commands.Application;
 using CfpService.Application.Repositories.Application;
+using CfpService.Contracts.Errors;
+using CfpService.Contracts.Results;
 using MediatR;
 
 namespace CfpService.Application.Handlers.Commands;
 
-public class DeleteApplicationCommandHandler : IRequestHandler<DeleteApplicationCommand>
+public class DeleteApplicationCommandHandler : IRequestHandler<DeleteApplicationCommand, Result>
 {
     private readonly IApplicationRepository _repository;
 
@@ -13,8 +15,14 @@ public class DeleteApplicationCommandHandler : IRequestHandler<DeleteApplication
         _repository = repository;
     }
 
-    public async Task Handle(DeleteApplicationCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeleteApplicationCommand request, CancellationToken cancellationToken)
     {
-        _repository.Delete(request.Id);
+        var exists = await _repository.ExistByApplicationId(request.Id);
+        
+        if (!exists) 
+            return Result.Fail(ApplicationErrors.ApplicationNotFound(request.Id));
+        
+        await _repository.Delete(request.Id);
+        return Result.Ok();
     }
 }

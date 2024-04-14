@@ -23,7 +23,10 @@ public class ApplicationsController : ControllerBase
         var query = new GetAllApplicationsQuery(submittedAfter, unsubmittedOlder);
         var result = await _mediator.Send(query);
 
-        return Ok(result);
+        if (result.Failure)
+            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
+
+        return Ok(result.Value);
     }
     
     [HttpGet("{applicationId}")]
@@ -31,16 +34,22 @@ public class ApplicationsController : ControllerBase
     {
         var query = new GetApplicationByIdQuery(applicationId);
         var result = await _mediator.Send(query);
+        
+        if (result.Failure)
+            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
 
-        return Ok(result);
+        return Ok(result.Value);
     }
     
     [HttpPost("{applicationId}/submit")]
     public async Task<IActionResult> Submit(Guid applicationId)
     {
         var command = new SubmitApplicationCommand(applicationId);
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
 
+        if (result.Failure)
+            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
+        
         return Ok();
     }
     
@@ -53,7 +62,10 @@ public class ApplicationsController : ControllerBase
         var command = new AddApplicationCommand(dto);
         var result = await _mediator.Send(command);
 
-        return Ok(result);
+        if (result.Failure)
+            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
+        
+        return Ok(result.Value);
     }
     
     [HttpPut("{applicationId}")]
@@ -64,16 +76,22 @@ public class ApplicationsController : ControllerBase
         
         var command = new EditApplicationCommand(dto);
         var result = await _mediator.Send(command);
+        
+        if (result.Failure)
+            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
 
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpDelete("{applicationId}")]
     public async Task<IActionResult> Delete(Guid applicationId)
     {
         var command = new DeleteApplicationCommand(applicationId);
-        await _mediator.Send(command);
+        var result = await _mediator.Send(command);
 
+        if (result.Failure)
+            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
+        
         return Ok();
     }
 }

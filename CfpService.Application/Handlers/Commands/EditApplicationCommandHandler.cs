@@ -2,11 +2,13 @@ using CfpService.Application.Commands.Application;
 using CfpService.Application.Mappers.ApplicationMapper;
 using CfpService.Application.Repositories.Application;
 using CfpService.Contracts.Dtos.Application;
+using CfpService.Contracts.Errors;
+using CfpService.Contracts.Results;
 using MediatR;
 
 namespace CfpService.Application.Handlers.Commands;
 
-public class EditApplicationCommandHandler : IRequestHandler<EditApplicationCommand, GetApplicationDto>
+public class EditApplicationCommandHandler : IRequestHandler<EditApplicationCommand, Result<GetApplicationDto>>
 {
     private readonly IApplicationRepository _repository;
     private readonly IApplicationMapper _mapper;
@@ -16,20 +18,19 @@ public class EditApplicationCommandHandler : IRequestHandler<EditApplicationComm
         _repository = repository;
         _mapper = mapper;
     }
-
-
-    public async Task<GetApplicationDto> Handle(EditApplicationCommand request, CancellationToken cancellationToken)
+    
+    public async Task<Result<GetApplicationDto>> Handle(EditApplicationCommand request, CancellationToken cancellationToken)
     {
-        if (await _repository.ExistByApplicationId(request.Dto.Id) == false)
-            throw new KeyNotFoundException($"application with id {request.Dto.Id} not found");
+        var application = await _repository.GetById(request.Dto.Id);
+        
+        if (application == null)
+            return Result.Fail<GetApplicationDto>(ApplicationErrors.ApplicationNotFound(request.Dto.Id));
             
         if (await _repository.IsSubmitted(request.Dto.Id))
-            throw new ArgumentException("cannot edit submitted application");
-
-        var application = await _repository.GetById(request.Dto.Id);
+            return Result.Fail<GetApplicationDto>(ApplicationErrors.CannotEditSubmittedApplication());
         
         var alteredApplication = await _repository.Put(_mapper.ToEntity(request.Dto, application));
         
-        return _mapper.ToDto(alteredApplication);
+        return Result.Ok(_mapper.ToDto(alteredApplication));
     }
 }

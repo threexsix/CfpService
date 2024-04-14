@@ -2,11 +2,13 @@ using CfpService.Application.Mappers.ApplicationMapper;
 using CfpService.Application.Queries.Application;
 using CfpService.Application.Repositories.Application;
 using CfpService.Contracts.Dtos.Application;
+using CfpService.Contracts.Errors;
+using CfpService.Contracts.Results;
 using MediatR;
 
 namespace CfpService.Application.Handlers.Queries;
 
-public class GetUnSubmittedApplicationByUserIdQueryHandler : IRequestHandler<GetUnSubmittedApplicationByUserIdQuery, GetApplicationDto>
+public class GetUnSubmittedApplicationByUserIdQueryHandler : IRequestHandler<GetUnSubmittedApplicationByUserIdQuery, Result<GetApplicationDto>>
 {
     private readonly IApplicationRepository _repository;
     private readonly IApplicationMapper _mapper;
@@ -17,13 +19,13 @@ public class GetUnSubmittedApplicationByUserIdQueryHandler : IRequestHandler<Get
         _mapper = mapper;
     }
 
-    public async Task<GetApplicationDto> Handle(GetUnSubmittedApplicationByUserIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetApplicationDto>> Handle(GetUnSubmittedApplicationByUserIdQuery request, CancellationToken cancellationToken)
     {
         var application = await _repository.GetUserUnSubmittedApplication(request.UserId);
+
+        if (application == null)
+            return Result.Fail<GetApplicationDto>(ApplicationErrors.UserUnsubmittedApplicationNotFound());
         
-        if (application == null) 
-            throw new ArgumentException("user doesn't have any submitted applications");
-        
-        return _mapper.ToDto(application);
+        return Result.Ok(_mapper.ToDto(application));
     }
 }
