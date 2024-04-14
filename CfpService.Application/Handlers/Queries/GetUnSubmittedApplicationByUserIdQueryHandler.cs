@@ -19,7 +19,7 @@ public class GetUnSubmittedApplicationByUserIdQueryHandler : IRequestHandler<Get
 
     public async Task<GetApplicationDto> Handle(GetUnSubmittedApplicationByUserIdQuery request, CancellationToken cancellationToken)
     {
-        var application = _repository.GetUserUnSubmittedApplication(request.UserId);
+        var application = await _repository.GetUserUnSubmittedApplication(request.UserId);
         
         if (application == null) 
             throw new ArgumentException("user doesn't have any submitted applications");

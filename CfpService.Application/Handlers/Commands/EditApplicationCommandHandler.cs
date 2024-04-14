@@ -20,15 +20,15 @@ public class EditApplicationCommandHandler : IRequestHandler<EditApplicationComm
 
     public async Task<GetApplicationDto> Handle(EditApplicationCommand request, CancellationToken cancellationToken)
     {
-        if (!_repository.ExistByApplicationId(request.Dto.Id))
+        if (await _repository.ExistByApplicationId(request.Dto.Id) == false)
             throw new KeyNotFoundException($"application with id {request.Dto.Id} not found");
             
-        if (_repository.IsSubmitted(request.Dto.Id))
+        if (await _repository.IsSubmitted(request.Dto.Id))
             throw new ArgumentException("cannot edit submitted application");
 
-        var application = _repository.GetById(request.Dto.Id);
+        var application = await _repository.GetById(request.Dto.Id);
         
-        var alteredApplication = _repository.Put(_mapper.ToEntity(request.Dto, application));
+        var alteredApplication = await _repository.Put(_mapper.ToEntity(request.Dto, application));
         
         return _mapper.ToDto(alteredApplication);
     }

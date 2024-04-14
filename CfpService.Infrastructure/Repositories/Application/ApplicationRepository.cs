@@ -16,10 +16,10 @@ public class ApplicationRepository : IApplicationRepository
         _connectionString = options.Value.PostgresConnectionString;
     }
     
-    public ConferenceApplication? GetById(Guid id)
+    public async Task<ConferenceApplication?> GetById(Guid id)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
                 select  id,
                         author,
@@ -33,13 +33,13 @@ public class ApplicationRepository : IApplicationRepository
                 where   id = @Id
                 ";
             
-        return connection.QuerySingleOrDefault<ConferenceApplication>(sql, new { Id = id });
+        return await connection.QuerySingleOrDefaultAsync<ConferenceApplication>(sql, new { Id = id });
     }
 
-    public ConferenceApplication? Add(ConferenceApplication application)
+    public async Task<ConferenceApplication?> Add(ConferenceApplication application)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
             insert into applications
                     (
@@ -62,14 +62,14 @@ public class ApplicationRepository : IApplicationRepository
                     )
             returning id, author, activity, name, description, outline, created_at, submitted_at;
             ";
-        return connection.QueryFirstOrDefault<ConferenceApplication>(sql, application);
+        return await connection.QueryFirstOrDefaultAsync<ConferenceApplication>(sql, application);
     }
 
 
-    public ConferenceApplication? Put(ConferenceApplication application)
+    public async Task<ConferenceApplication?> Put(ConferenceApplication application)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
             update applications
             
@@ -91,26 +91,26 @@ public class ApplicationRepository : IApplicationRepository
             application.Description,
             application.Outline
         };
-        return connection.QueryFirstOrDefault<ConferenceApplication>(sql, parameters);
+        return await connection.QueryFirstOrDefaultAsync<ConferenceApplication>(sql, parameters);
     }
 
-    public void Delete(Guid id)
+    public async Task Delete(Guid id)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
             delete
             from    applications
             where   id = @Id
             and     submitted_at is null
         ";
-        connection.Execute(sql, new { Id = id});
+        await connection.ExecuteAsync(sql, new { Id = id});
     }
     
-    public void Submit(Guid id)
+    public async Task Submit(Guid id)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
             update applications
             set    submitted_at = @Time
@@ -123,13 +123,13 @@ public class ApplicationRepository : IApplicationRepository
             Time = DateTime.UtcNow
         };
         
-        connection.Execute(sql, parameters);
+        await connection.ExecuteAsync(sql, parameters);
     }
 
-    public List<ConferenceApplication> GetSubmittedApplications(DateTime time)
+    public async Task<IEnumerable<ConferenceApplication>> GetSubmittedApplications(DateTime time)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
                 select  id,
                         author,
@@ -145,13 +145,14 @@ public class ApplicationRepository : IApplicationRepository
                 where   submitted_at >= @Time
         ";
 
-        return connection.Query<ConferenceApplication>(sql, new { Time = time }).ToList();
+        var applications = await connection.QueryAsync<ConferenceApplication>(sql, new { Time = time });
+        return applications.ToList();
     }
     
-    public List<ConferenceApplication> GetUnSubmittedApplications(DateTime time)
+    public async Task<IEnumerable<ConferenceApplication>> GetUnSubmittedApplications(DateTime time)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
                 select  id,
                         author,
@@ -168,13 +169,14 @@ public class ApplicationRepository : IApplicationRepository
                 and     submitted_at is null
                 ";
 
-        return connection.Query<ConferenceApplication>(sql, new { Time = time }).ToList();
+        var applications = await connection.QueryAsync<ConferenceApplication>(sql, new { Time = time });
+        return applications.ToList();
     }
 
-    public ConferenceApplication? GetUserUnSubmittedApplication(Guid userId)
+    public async Task<ConferenceApplication?> GetUserUnSubmittedApplication(Guid userId)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
                 select  id,
                         author,
@@ -191,13 +193,13 @@ public class ApplicationRepository : IApplicationRepository
                 and     submitted_at is null
                 ";
 
-        return connection.QuerySingleOrDefault<ConferenceApplication>(sql, new { Id = userId });
+        return await connection.QuerySingleOrDefaultAsync<ConferenceApplication>(sql, new { Id = userId });
     }
 
-    public bool ExistByApplicationId(Guid applicationId)
+    public async Task<bool> ExistByApplicationId(Guid applicationId)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
                 select exists 
                 (
@@ -209,13 +211,13 @@ public class ApplicationRepository : IApplicationRepository
                 )
                 ";
 
-        return connection.QuerySingleOrDefault<bool>(sql, new { Id = applicationId });
+        return await connection.QuerySingleOrDefaultAsync<bool>(sql, new { Id = applicationId });
     }
     
-    public bool ExistUnsubmittedFromUser(Guid userId)
+    public async Task<bool> ExistUnsubmittedFromUser(Guid userId)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
                 select exists 
                     (
@@ -228,13 +230,13 @@ public class ApplicationRepository : IApplicationRepository
                     )
                 ";
 
-        return connection.QuerySingleOrDefault<bool>(sql, new { Id = userId });
+        return await connection.QuerySingleOrDefaultAsync<bool>(sql, new { Id = userId });
     }
 
-    public bool IsSubmitted(Guid applicationId)
+    public async Task<bool> IsSubmitted(Guid applicationId)
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
                 select exists 
                     (
@@ -247,6 +249,6 @@ public class ApplicationRepository : IApplicationRepository
                     )
                 ";
 
-        return connection.QuerySingleOrDefault<bool>(sql, new { Id = applicationId });
+        return await connection.QuerySingleOrDefaultAsync<bool>(sql, new { Id = applicationId });
     }
 }

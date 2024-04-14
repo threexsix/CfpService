@@ -15,18 +15,18 @@ public class SubmitApplicationCommandHandler : IRequestHandler<SubmitApplication
 
     public async Task Handle(SubmitApplicationCommand request, CancellationToken cancellationToken)
     {
-        if (!_repository.ExistByApplicationId(request.Id))
+        if (await _repository.ExistByApplicationId(request.Id) == false)
             throw new KeyNotFoundException($"application with id {request.Id} not found");
         
-        if (!IsApplicationValidToSubmit(request.Id))
+        if (await IsApplicationValidToSubmit(request.Id) == false)
             throw new ArgumentException("cannot submit, key fields are not filled in application");
         
-        _repository.Submit(request.Id);
+        await _repository.Submit(request.Id);
     }
     
-    private bool IsApplicationValidToSubmit(Guid applicationId)
+    private async Task<bool> IsApplicationValidToSubmit(Guid applicationId)
     {
-        var application = _repository.GetById(applicationId);
+        var application = await _repository.GetById(applicationId);
         return (!string.IsNullOrWhiteSpace(application.Name) && !string.IsNullOrWhiteSpace(application.Activity) &&
                 !string.IsNullOrWhiteSpace(application.Outline));
     }

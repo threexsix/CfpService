@@ -16,15 +16,16 @@ public class ActivityRepository : IActivityRepository
         _connectionString = options.Value.PostgresConnectionString;
     }
 
-    public List<ApplicationActivity> GetAllActivities()
+    public async Task<IEnumerable<ApplicationActivity>> GetAllActivities()
     {
-        using var connection = new NpgsqlConnection(_connectionString);
-        connection.Open();
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
         const string sql = @"
                 select  *
                 from    activity_types
                 ";
-
-        return connection.Query<ApplicationActivity>(sql).ToList();
+        
+        var activities = await connection.QueryAsync<ApplicationActivity>(sql);
+        return activities.ToList();
     }
 }

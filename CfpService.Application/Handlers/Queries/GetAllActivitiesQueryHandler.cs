@@ -19,7 +19,7 @@ public class GetAllActivitiesQueryHandler : IRequestHandler<GetAllActivitiesQuer
 
     public async Task<List<GetActivityDto>> Handle(GetAllActivitiesQuery request, CancellationToken cancellationToken)
     {
-        var activities = _repository.GetAllActivities();
+        var activities = await _repository.GetAllActivities();
         
         if (activities == null) 
             throw new  ArgumentException("no activity found");

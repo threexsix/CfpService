@@ -18,7 +18,7 @@ public class GetAllApplicationsQueryHandler : IRequestHandler<GetAllApplications
         _mapper = mapper;
     }
 
-    public async Task<List<GetApplicationDto>> Handle(GetAllApplicationsQuery request, CancellationToken cancellationToken)
+    public  Task<List<GetApplicationDto>> Handle(GetAllApplicationsQuery request, CancellationToken cancellationToken)
     {
         if (request.SubmittedAfter.HasValue == request.UnsubmittedOlder.HasValue)
         {
@@ -28,19 +28,15 @@ public class GetAllApplicationsQueryHandler : IRequestHandler<GetAllApplications
         return request.SubmittedAfter.HasValue ? GetSubmittedApplications(request.SubmittedAfter.Value) : GetUnSubmittedApplications(request.UnsubmittedOlder.Value);
     }
     
-    private List<GetApplicationDto> GetSubmittedApplications(DateTime time)
+    private async Task<List<GetApplicationDto>> GetSubmittedApplications(DateTime time)
     {
-        var applications = _repository.GetSubmittedApplications(time)
-            .Select(x => _mapper.ToDto(x))
-            .ToList();
-        return applications;
+        var applications = await _repository.GetSubmittedApplications(time);
+        return applications.Select(x => _mapper.ToDto(x)).ToList();
     }
     
-    private List<GetApplicationDto> GetUnSubmittedApplications(DateTime time)
+    private async Task<List<GetApplicationDto>> GetUnSubmittedApplications(DateTime time)
     {
-        var applications = _repository.GetUnSubmittedApplications(time)
-            .Select(x => _mapper.ToDto(x))
-            .ToList();
-        return applications;
+        var applications = await _repository.GetUnSubmittedApplications(time);
+        return applications.Select(x => _mapper.ToDto(x)).ToList();
     }
 }

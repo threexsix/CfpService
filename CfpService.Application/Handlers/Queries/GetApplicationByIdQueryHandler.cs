@@ -19,10 +19,10 @@ public class GetApplicationByIdQueryHandler : IRequestHandler<GetApplicationById
 
     public async Task<GetApplicationDto> Handle(GetApplicationByIdQuery request, CancellationToken cancellationToken)
     {
-        if (!_repository.ExistByApplicationId(request.Id))
+        if (await _repository.ExistByApplicationId(request.Id) == false)
             throw new KeyNotFoundException($"application with id {request.Id} not found");
         
-        var application = _repository.GetById(request.Id);
+        var application = await _repository.GetById(request.Id);
         
         return _mapper.ToDto(application);
     }
