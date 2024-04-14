@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfpServiceApi", "CfpServiceApi\CfpServiceApi.csproj", "{A4E4F2EB-8845-408F-8704-FE710B80955A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tests", "tests\tests.csproj", "{11E6BACF-FBD4-476C-A9BA-FFE4AEA8D207}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfpService.Application", "CfpService.Application\CfpService.Application.csproj", "{C6F04A98-0E1F-4D26-A52A-7C345C65C356}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfpService.Infrastructure", "CfpService.Infrastructure\CfpService.Infrastructure.csproj", "{73A66E45-DDAB-4F9B-9AED-8DB25DED25E6}"
@@ -20,10 +18,6 @@ Global
 		{A4E4F2EB-8845-408F-8704-FE710B80955A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4E4F2EB-8845-408F-8704-FE710B80955A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4E4F2EB-8845-408F-8704-FE710B80955A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11E6BACF-FBD4-476C-A9BA-FFE4AEA8D207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11E6BACF-FBD4-476C-A9BA-FFE4AEA8D207}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11E6BACF-FBD4-476C-A9BA-FFE4AEA8D207}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11E6BACF-FBD4-476C-A9BA-FFE4AEA8D207}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C6F04A98-0E1F-4D26-A52A-7C345C65C356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C6F04A98-0E1F-4D26-A52A-7C345C65C356}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C6F04A98-0E1F-4D26-A52A-7C345C65C356}.Release|Any CPU.ActiveCfg = Release|Any CPU
