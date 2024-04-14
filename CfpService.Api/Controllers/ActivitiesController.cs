@@ -23,10 +23,7 @@ public class ActivitiesController : ControllerBase
         var query = new GetAllActivitiesQuery();
         var result = await _mediator.Send(query);
 
-        if (result.Failure)
-            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
-        
-        return result.Value;
+        return this.HandleResult(result);
 
     }
 }

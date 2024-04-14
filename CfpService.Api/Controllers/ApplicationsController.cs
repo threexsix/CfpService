@@ -23,10 +23,7 @@ public class ApplicationsController : ControllerBase
         var query = new GetAllApplicationsQuery(submittedAfter, unsubmittedOlder);
         var result = await _mediator.Send(query);
 
-        if (result.Failure)
-            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
-
-        return Ok(result.Value);
+        return this.HandleResult(result);
     }
     
     [HttpGet("{applicationId}")]
@@ -35,10 +32,7 @@ public class ApplicationsController : ControllerBase
         var query = new GetApplicationByIdQuery(applicationId);
         var result = await _mediator.Send(query);
         
-        if (result.Failure)
-            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
-
-        return Ok(result.Value);
+        return this.HandleResult(result);
     }
     
     [HttpPost("{applicationId}/submit")]
@@ -47,10 +41,7 @@ public class ApplicationsController : ControllerBase
         var command = new SubmitApplicationCommand(applicationId);
         var result = await _mediator.Send(command);
 
-        if (result.Failure)
-            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
-        
-        return Ok();
+        return this.HandleResult(result);
     }
     
     [HttpPost]
@@ -62,10 +53,7 @@ public class ApplicationsController : ControllerBase
         var command = new AddApplicationCommand(dto);
         var result = await _mediator.Send(command);
 
-        if (result.Failure)
-            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
-        
-        return Ok(result.Value);
+        return this.HandleResult(result);
     }
     
     [HttpPut("{applicationId}")]
@@ -77,10 +65,7 @@ public class ApplicationsController : ControllerBase
         var command = new EditApplicationCommand(applicationId, dto);
         var result = await _mediator.Send(command);
         
-        if (result.Failure)
-            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
-
-        return Ok(result.Value);
+        return this.HandleResult(result);
     }
 
     [HttpDelete("{applicationId}")]
@@ -89,9 +74,6 @@ public class ApplicationsController : ControllerBase
         var command = new DeleteApplicationCommand(applicationId);
         var result = await _mediator.Send(command);
 
-        if (result.Failure)
-            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
-        
-        return Ok();
+        return this.HandleResult(result);
     }
 }

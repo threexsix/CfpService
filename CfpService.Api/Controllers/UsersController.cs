@@ -22,9 +22,6 @@ public class UsersController : ControllerBase
         var query = new GetUnSubmittedApplicationByUserIdQuery(userId);
         var result = await _mediator.Send(query);
 
-        if (result.Failure)
-            return StatusCode(result.Error.ErrorCode, new { Code = result.Error.ErrorCode, Error = result.Error.ErrorMessage });
-        
-        return Ok(result.Value);
+        return this.HandleResult(result);
     }
 }
