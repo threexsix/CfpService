@@ -21,7 +21,7 @@ public class GetAllActivitiesQueryHandler : IRequestHandler<GetAllActivitiesQuer
 
     public async Task<Result<List<GetActivityDto>>> Handle(GetAllActivitiesQuery request, CancellationToken cancellationToken)
     {
-        var activities = (await _repository.GetAllActivities()).ToList();
+        var activities = (await _repository.GetAllActivitiesAsync()).ToList();
 
         if (!activities.Any())
             return Result.Fail<List<GetActivityDto>>(ActivityErrors.ActivitiesNotFound());

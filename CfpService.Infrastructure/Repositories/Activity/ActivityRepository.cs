@@ -16,7 +16,7 @@ public class ActivityRepository : IActivityRepository
         _connectionString = options.Value.PostgresConnectionString;
     }
 
-    public async Task<IEnumerable<ApplicationActivity>> GetAllActivities()
+    public async Task<IEnumerable<ApplicationActivity>> GetAllActivitiesAsync()
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();

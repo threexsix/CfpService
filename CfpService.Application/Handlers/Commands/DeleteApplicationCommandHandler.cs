@@ -17,15 +17,15 @@ public class DeleteApplicationCommandHandler : IRequestHandler<DeleteApplication
 
     public async Task<Result> Handle(DeleteApplicationCommand request, CancellationToken cancellationToken)
     {
-        var exists = await _repository.ExistByApplicationId(request.Id);
+        var exists = await _repository.ExistByApplicationIdAsync(request.Id);
         
         if (!exists) 
             return Result.Fail(ApplicationErrors.ApplicationNotFound(request.Id));
         
-        if (await _repository.IsSubmitted(request.Id))
+        if (await _repository.IsSubmittedAsync(request.Id))
             return Result.Fail(ApplicationErrors.AlreadySubmittedApplication());
         
-        await _repository.Delete(request.Id);
+        await _repository.DeleteAsync(request.Id);
         return Result.Ok();
     }
 }

@@ -21,11 +21,11 @@ public class AddApplicationCommandHandler : IRequestHandler<AddApplicationComman
 
     public async Task<Result<GetApplicationDto>> Handle(AddApplicationCommand request, CancellationToken cancellationToken)
     {
-        if (await _repository.ExistUnsubmittedFromUser(request.Dto.Author))
+        if (await _repository.ExistUnsubmittedFromUserAsync(request.Dto.Author))
             return Result.Fail<GetApplicationDto>(ApplicationErrors.UserHasUnsubmittedApplication());
 
         var application = _mapper.ToEntity(request.Dto);
-        var addedApplication = await _repository.Add(application);
+        var addedApplication = await _repository.AddAsync(application);
         
         return Result.Ok(_mapper.ToDto(addedApplication));
     }

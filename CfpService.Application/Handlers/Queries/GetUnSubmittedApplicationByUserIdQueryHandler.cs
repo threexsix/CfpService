@@ -21,7 +21,7 @@ public class GetUnSubmittedApplicationByUserIdQueryHandler : IRequestHandler<Get
 
     public async Task<Result<GetApplicationDto>> Handle(GetUnSubmittedApplicationByUserIdQuery request, CancellationToken cancellationToken)
     {
-        var application = await _repository.GetUserUnSubmittedApplication(request.UserId);
+        var application = await _repository.GetUserUnSubmittedApplicationAsync(request.UserId);
 
         if (application == null)
             return Result.Fail<GetApplicationDto>(ApplicationErrors.UserUnsubmittedApplicationNotFound());

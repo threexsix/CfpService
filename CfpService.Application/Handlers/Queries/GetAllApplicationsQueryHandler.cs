@@ -35,13 +35,13 @@ public class GetAllApplicationsQueryHandler : IRequestHandler<GetAllApplications
     
     private async Task<List<GetApplicationDto>> GetSubmittedApplications(DateTime time)
     {
-        var applications = await _repository.GetSubmittedApplications(time);
+        var applications = await _repository.GetSubmittedApplicationsAsync(time);
         return applications.Select(x => _mapper.ToDto(x)).ToList();
     }
     
     private async Task<List<GetApplicationDto>> GetUnSubmittedApplications(DateTime time)
     {
-        var applications = await _repository.GetUnSubmittedApplications(time);
+        var applications = await _repository.GetUnSubmittedApplicationsAsync(time);
         return applications.Select(x => _mapper.ToDto(x)).ToList();
     }
 }

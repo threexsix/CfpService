@@ -16,7 +16,7 @@ public class ApplicationRepository : IApplicationRepository
         _connectionString = options.Value.PostgresConnectionString;
     }
     
-    public async Task<ConferenceApplication?> GetById(Guid id)
+    public async Task<ConferenceApplication?> GetByIdAsync(Guid id)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -36,7 +36,7 @@ public class ApplicationRepository : IApplicationRepository
         return await connection.QuerySingleOrDefaultAsync<ConferenceApplication>(sql, new { Id = id });
     }
 
-    public async Task<ConferenceApplication?> Add(ConferenceApplication application)
+    public async Task<ConferenceApplication?> AddAsync(ConferenceApplication application)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -66,7 +66,7 @@ public class ApplicationRepository : IApplicationRepository
     }
 
 
-    public async Task<ConferenceApplication?> Put(ConferenceApplication application)
+    public async Task<ConferenceApplication?> PutAsync(ConferenceApplication application)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -94,7 +94,7 @@ public class ApplicationRepository : IApplicationRepository
         return await connection.QueryFirstOrDefaultAsync<ConferenceApplication>(sql, parameters);
     }
 
-    public async Task Delete(Guid id)
+    public async Task DeleteAsync(Guid id)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -107,7 +107,7 @@ public class ApplicationRepository : IApplicationRepository
         await connection.ExecuteAsync(sql, new { Id = id});
     }
     
-    public async Task Submit(Guid id)
+    public async Task SubmitAsync(Guid id)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -126,7 +126,7 @@ public class ApplicationRepository : IApplicationRepository
         await connection.ExecuteAsync(sql, parameters);
     }
 
-    public async Task<IEnumerable<ConferenceApplication>> GetSubmittedApplications(DateTime time)
+    public async Task<IEnumerable<ConferenceApplication>> GetSubmittedApplicationsAsync(DateTime time)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -149,7 +149,7 @@ public class ApplicationRepository : IApplicationRepository
         return applications.ToList();
     }
     
-    public async Task<IEnumerable<ConferenceApplication>> GetUnSubmittedApplications(DateTime time)
+    public async Task<IEnumerable<ConferenceApplication>> GetUnSubmittedApplicationsAsync(DateTime time)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -173,7 +173,7 @@ public class ApplicationRepository : IApplicationRepository
         return applications.ToList();
     }
 
-    public async Task<ConferenceApplication?> GetUserUnSubmittedApplication(Guid userId)
+    public async Task<ConferenceApplication?> GetUserUnSubmittedApplicationAsync(Guid userId)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -196,7 +196,7 @@ public class ApplicationRepository : IApplicationRepository
         return await connection.QuerySingleOrDefaultAsync<ConferenceApplication>(sql, new { Id = userId });
     }
 
-    public async Task<bool> ExistByApplicationId(Guid applicationId)
+    public async Task<bool> ExistByApplicationIdAsync(Guid applicationId)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -214,7 +214,7 @@ public class ApplicationRepository : IApplicationRepository
         return await connection.QuerySingleOrDefaultAsync<bool>(sql, new { Id = applicationId });
     }
     
-    public async Task<bool> ExistUnsubmittedFromUser(Guid userId)
+    public async Task<bool> ExistUnsubmittedFromUserAsync(Guid userId)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -233,7 +233,7 @@ public class ApplicationRepository : IApplicationRepository
         return await connection.QuerySingleOrDefaultAsync<bool>(sql, new { Id = userId });
     }
 
-    public async Task<bool> IsSubmitted(Guid applicationId)
+    public async Task<bool> IsSubmittedAsync(Guid applicationId)
     {
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
