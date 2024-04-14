@@ -21,6 +21,8 @@ public class SeedData : Migration
     public override void Down()
     {
         const string sql = @"
+            delete from applications; 
+
             delete from activity_types 
             where name in ('Report', 'Masterclass', 'Discussion');
         ";

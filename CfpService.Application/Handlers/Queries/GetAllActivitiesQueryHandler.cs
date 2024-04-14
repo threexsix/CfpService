@@ -23,7 +23,7 @@ public class GetAllActivitiesQueryHandler : IRequestHandler<GetAllActivitiesQuer
     {
         var activities = (await _repository.GetAllActivities()).ToList();
 
-        if (activities == null || !activities.Any())
+        if (!activities.Any())
             return Result.Fail<List<GetActivityDto>>(ActivityErrors.ActivitiesNotFound());
             
         return Result.Ok(activities.Select(x => _mapper.ToDto(x)).ToList());

@@ -1,10 +1,6 @@
-using CfpService;
-using CfpService.Application;
 using CfpService.Application.Extensions;
 using CfpService.Extensions;
-using CfpService.Infrastructure;
 using CfpService.Infrastructure.Extension;
-
 
 var builder = WebApplication.CreateBuilder(args);
 {
