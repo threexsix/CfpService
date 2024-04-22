@@ -47,9 +47,6 @@ public class ApplicationsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<GetApplicationDto>> PostApplication([FromBody] PostApplicationDto dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
         var command = new AddApplicationCommand(dto);
         var result = await _mediator.Send(command);
 
@@ -59,9 +56,6 @@ public class ApplicationsController : ControllerBase
     [HttpPut("{applicationId}")]
     public async Task<ActionResult<GetApplicationDto>> EditNotSubmittedApplication(Guid applicationId, [FromBody] PutApplicationDto dto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
         var command = new EditApplicationCommand(applicationId, dto);
         var result = await _mediator.Send(command);
         
